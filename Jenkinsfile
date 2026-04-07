@@ -62,8 +62,10 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    echo 'Deploying to Production...'
-                    sh "docker compose up -d --build --remove-orphans --force-recreate"
+                    echo 'Deploying to Production stack...'
+                    // Ensure previous orphaned containers are removed by using a fixed project name
+                    sh "docker compose -p iwerp down --remove-orphans"
+                    sh "docker compose -p iwerp up -d --build --remove-orphans --force-recreate"
                 }
             }
         }
@@ -72,7 +74,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running Database Initializer Profile...'
-                    sh "docker compose --profile init up db-bootstrap"
+                    sh "docker compose -p iwerp --profile init up db-bootstrap"
                 }
             }
         }
