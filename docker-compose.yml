@@ -1,19 +1,4 @@
 services:
-  proxy:
-    image: nginx:1.27-alpine
-    container_name: iwfusion-proxy
-    depends_on:
-      frontend:
-        condition: service_started
-      backend:
-        condition: service_started
-    volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./docker/nginx/certs:/etc/nginx/certs:ro
-    ports:
-      - "${PROXY_HTTP_PORT:-80}:80"
-      - "${PROXY_HTTPS_PORT:-443}:443"
-    restart: unless-stopped
 
   frontend:
     build:
@@ -27,6 +12,8 @@ services:
     container_name: iwfusion-frontend
     expose:
       - "80"
+    ports:
+      - "${FRONTEND_PORT:-8081}:80"
     restart: unless-stopped
 
   backend:
