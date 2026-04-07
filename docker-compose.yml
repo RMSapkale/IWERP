@@ -58,6 +58,27 @@ services:
     networks:
       - iw-network
 
+  db-bootstrap:
+    image: iwfusion/backend:v1
+    container_name: iwfusion-db-bootstrap
+    profiles: ["init"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-iwfusion}:${POSTGRES_PASSWORD:-iwfusion_change_me}@postgres:5432/${POSTGRES_DB:-iwfusion}"
+      SECRET_KEY: "${SECRET_KEY:-change-me-before-production}"
+      IWERP_BASE_DIR: "/app/runtime/iwerp-prod"
+      DB_INIT_MODE: "${DB_INIT_MODE:-safe}"
+      DB_RESET_CONFIRM: "${DB_RESET_CONFIRM:-}"
+    command: ["/bin/sh", "/compose-scripts/init-db.sh"]
+    volumes:
+      - ./runtime_content:/app/runtime:ro
+      - ./docker/backend/init-db.sh:/compose-scripts/init-db.sh:ro
+    restart: "no"
+    networks:
+      - iw-network
+
   postgres:
     image: pgvector/pgvector:pg16
     container_name: iwfusion-postgres
