@@ -30,6 +30,14 @@ pipeline {
         MODEL_CONTEXT_SIZE = '8192'
         MODEL_THREADS = '8'
         MODEL_GPU_LAYERS = '0'
+
+        // Host Port Mappings to avoid collisions (e.g. Jenkins on 8080)
+        PROXY_HTTP_PORT = '80'
+        PROXY_HTTPS_PORT = '443'
+        BACKEND_PORT = '8000'
+        MODEL_PORT = '8090'
+        POSTGRES_PORT = '5432'
+        REDIS_PORT = '6379'
     }
 
     stages {
