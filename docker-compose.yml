@@ -32,8 +32,8 @@ services:
     environment:
       DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-iwfusion}:${POSTGRES_PASSWORD:-iwfusion_change_me}@postgres:5432/${POSTGRES_DB:-iwfusion}"
       SECRET_KEY: "${SECRET_KEY:-change-me-before-production}"
-      LOCAL_SLM_BASE_URL: "http://model:8080"
-      LLAMA_CPP_BASE_URL: "http://model:8080"
+      LOCAL_SLM_BASE_URL: "http://model:8082"
+      LLAMA_CPP_BASE_URL: "http://model:8082"
       ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-https://iwerp.com}"
       IWERP_BASE_DIR: "/app/runtime/iwerp-prod"
       IWFUSION_INFERENCE_BACKEND: "${IWFUSION_INFERENCE_BACKEND:-llama_cpp}"
