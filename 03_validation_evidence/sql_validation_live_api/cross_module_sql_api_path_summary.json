@@ -1,0 +1,29 @@
+{
+  "mode": "live_api_path_sql_validation",
+  "generated_at": "2026-04-06T13:43:31.277557+00:00",
+  "base_url": "http://127.0.0.1:8000",
+  "tenant_name": "SQL API Validation 1775482988",
+  "engine_direct_baseline_path": "/Users/integrationwings/Desktop/LLM_Wrap/iwerp-prod/sql_validation/cross_module_sql_showcase_validation_results.json",
+  "total_prompts_tested": 17,
+  "primary_prompts_tested": 10,
+  "variant_prompts_tested": 4,
+  "refusal_prompts_tested": 3,
+  "total_generated": 11,
+  "total_correct_refusals": 3,
+  "total_failures": 3,
+  "pass_rate_pct": 82.35,
+  "no_hardcoding_compliance_pct": 100.0,
+  "full_shape_compliance_pct": 100.0,
+  "primary_prompt_pass_rate_pct": 80.0,
+  "failure_reason_counts": {
+    "unexpected_refusal": 3
+  },
+  "api_vs_engine_direct_mismatch_count": 4,
+  "api_vs_engine_direct_mismatch_case_ids": [
+    "PO-001",
+    "PO-002",
+    "PO-V001",
+    "PO-N001"
+  ],
+  "duration_sec": 22.71
+}

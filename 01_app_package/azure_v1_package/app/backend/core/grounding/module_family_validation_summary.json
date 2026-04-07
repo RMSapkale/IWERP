@@ -1,0 +1,14 @@
+{
+  "sample_size": 50,
+  "module_family_detection_accuracy": 0.96,
+  "retrieval_module_family_match_rate": 0.9138,
+  "cross_family_retrieval_rate": 0.0862,
+  "unknown_route_rate": 0.0,
+  "rejection_rate": 0.1,
+  "routed_families": {
+    "Financials": 18,
+    "Procurement": 8,
+    "HCM": 16,
+    "SCM": 8
+  }
+}

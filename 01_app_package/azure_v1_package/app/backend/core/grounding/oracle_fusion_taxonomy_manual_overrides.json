@@ -1,0 +1,13 @@
+{
+  "objects": {
+    "QA_IP_EVENTS": {
+      "owning_module": "Manufacturing",
+      "owning_module_family": "SCM",
+      "inferred_module": "Manufacturing",
+      "confidence_score": 1.0,
+      "inference_source": "manual",
+      "manual_lock": true,
+      "low_confidence": false
+    }
+  }
+}

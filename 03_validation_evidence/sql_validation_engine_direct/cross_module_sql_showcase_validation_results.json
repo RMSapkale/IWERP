@@ -1,0 +1,1547 @@
+[
+  {
+    "case_id": "AP-001",
+    "family": "AP Invoice Details",
+    "category": "baseline_primary",
+    "prompt": "Create an Oracle Fusion SQL query to extract AP invoice details with Business Unit, Invoice Number, Invoice Date, Supplier Name, Supplier Number, Invoice Amount, Invoice Currency, Invoice Status, Accounting Date. Filter Invoice Date between :P_FROM_DATE and :P_TO_DATE and order by Invoice Date.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_invoice_details",
+    "schema_metadata_hits": [
+      "AP_INVOICES_ALL",
+      "FUN_ALL_BUSINESS_UNITS_V",
+      "POZ_SUPPLIERS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 10.25
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 10.25
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": -1.7222
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  bu.BU_NAME AS BUSINESS_UNIT_NAME,\n  ai.INVOICE_NUM AS INVOICE_NUMBER,\n  ai.INVOICE_DATE AS INVOICE_DATE,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  ps.SEGMENT1 AS SUPPLIER_NUMBER,\n  ai.INVOICE_AMOUNT AS INVOICE_AMOUNT,\n  ai.INVOICE_CURRENCY_CODE AS INVOICE_CURRENCY,\n  ai.APPROVAL_STATUS AS INVOICE_STATUS,\n  ai.GL_DATE AS ACCOUNTING_DATE\nFROM AP_INVOICES_ALL ai\nJOIN POZ_SUPPLIERS ps\n  ON ai.VENDOR_ID = ps.VENDOR_ID\nJOIN FUN_ALL_BUSINESS_UNITS_V bu\n  ON ai.ORG_ID = bu.BU_ID\nWHERE ai.INVOICE_DATE BETWEEN :P_FROM_DATE AND :P_TO_DATE\nORDER BY ai.INVOICE_DATE;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AP-002",
+    "family": "AP Invoice Distribution & GL Account",
+    "category": "baseline_primary",
+    "prompt": "Create an Oracle Fusion SQL query to extract AP invoice distribution details with Invoice Number, Supplier Name, Distribution Line Number, Distribution Amount, Natural Account Segment, Cost Center, Liability Account. Display only invoices that are Validated and Accounted.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_invoice_distribution_accounting",
+    "schema_metadata_hits": [
+      "AP_INVOICES_ALL",
+      "AP_INVOICE_DISTRIBUTIONS_ALL",
+      "GL_CODE_COMBINATIONS",
+      "POZ_SUPPLIERS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 7.1786
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 6.0357
+      },
+      {
+        "title": "CM BANK ACC.xdm [Q1]",
+        "module": "Cash Management",
+        "score": 2.5357
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  ai.INVOICE_NUM AS INVOICE_NUMBER,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  aid.DISTRIBUTION_LINE_NUMBER AS DISTRIBUTION_LINE_NUMBER,\n  aid.AMOUNT AS DISTRIBUTION_AMOUNT,\n  gcc_dist.SEGMENT4 AS NATURAL_ACCOUNT_SEGMENT,\n  gcc_dist.SEGMENT5 AS COST_CENTER,\n  gcc_liab.CONCATENATED_SEGMENTS AS LIABILITY_ACCOUNT\nFROM AP_INVOICE_DISTRIBUTIONS_ALL aid\nJOIN AP_INVOICES_ALL ai\n  ON aid.INVOICE_ID = ai.INVOICE_ID\nJOIN POZ_SUPPLIERS ps\n  ON ai.VENDOR_ID = ps.VENDOR_ID\nJOIN GL_CODE_COMBINATIONS gcc_dist\n  ON aid.DIST_CODE_COMBINATION_ID = gcc_dist.CODE_COMBINATION_ID\nJOIN GL_CODE_COMBINATIONS gcc_liab\n  ON ai.ACCTS_PAY_CODE_COMBINATION_ID = gcc_liab.CODE_COMBINATION_ID\nWHERE ai.APPROVAL_STATUS IN ('APPROVED', 'VALIDATED')\n  AND aid.POSTED_FLAG = 'Y';",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AP-003",
+    "family": "AP Payments Report",
+    "category": "baseline_primary",
+    "prompt": "Create an Oracle Fusion SQL query to extract AP payments report with Supplier Name, Invoice Number, Payment Number, Payment Date, Payment Method, Paid Amount, Bank Account Name. Filter Payment Date = :P_PAYMENT_DATE.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_payments",
+    "schema_metadata_hits": [
+      "AP_CHECKS_ALL",
+      "AP_INVOICES_ALL",
+      "AP_INVOICE_PAYMENTS_ALL",
+      "POZ_SUPPLIERS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 7.2857
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 7.2857
+      },
+      {
+        "title": "Payment Approval Data Model.xdm [Q5]",
+        "module": "Payments",
+        "score": 0.1429
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  ai.INVOICE_NUM AS INVOICE_NUMBER,\n  ac.CHECK_NUMBER AS PAYMENT_NUMBER,\n  ac.CHECK_DATE AS PAYMENT_DATE,\n  ac.PAYMENT_METHOD_LOOKUP_CODE AS PAYMENT_METHOD,\n  aip.AMOUNT AS PAID_AMOUNT,\n  ac.BANK_ACCOUNT_NAME AS BANK_ACCOUNT_NAME\nFROM AP_INVOICE_PAYMENTS_ALL aip\nJOIN AP_INVOICES_ALL ai\n  ON aip.INVOICE_ID = ai.INVOICE_ID\nJOIN AP_CHECKS_ALL ac\n  ON aip.CHECK_ID = ac.CHECK_ID\nJOIN POZ_SUPPLIERS ps\n  ON ac.VENDOR_ID = ps.VENDOR_ID\nWHERE ac.CHECK_DATE = :P_PAYMENT_DATE;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AR-001",
+    "family": "AR Transaction Report",
+    "category": "baseline_primary",
+    "prompt": "Create an Oracle Fusion SQL query to extract AR transaction report with Customer Name, Transaction Number, Transaction Date, Business Unit, Amount Due Original, Remaining Amount, Due Date, Payment Status. Show only open transactions as of :P_AS_OF_DATE and order by Transaction Date.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Receivables",
+    "report_family": "receivables_transaction_report",
+    "schema_metadata_hits": [
+      "AR_PAYMENT_SCHEDULES_ALL",
+      "FUN_ALL_BUSINESS_UNITS_V",
+      "HZ_CUST_ACCOUNTS_",
+      "HZ_PARTIES",
+      "RA_CUSTOMER_TRX_ALL"
+    ],
+    "selected_pattern_example": "Customer invoices with outstanding balances [Oraclewings Q4]",
+    "catalog_hits": [
+      {
+        "title": "Customer invoices with outstanding balances [Oraclewings Q4]",
+        "module": "Receivables",
+        "score": 11.75
+      },
+      {
+        "title": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+        "module": "Receivables",
+        "score": 8.75
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": 6.75
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  hp.PARTY_NAME AS CUSTOMER_NAME,\n  rct.TRX_NUMBER AS TRANSACTION_NUMBER,\n  rct.TRX_DATE AS TRANSACTION_DATE,\n  bu.BU_NAME AS BUSINESS_UNIT_NAME,\n  aps.AMOUNT_DUE_ORIGINAL AS AMOUNT_DUE_ORIGINAL,\n  aps.AMOUNT_DUE_REMAINING AS REMAINING_AMOUNT,\n  aps.DUE_DATE AS DUE_DATE,\n  aps.STATUS AS PAYMENT_STATUS\nFROM RA_CUSTOMER_TRX_ALL rct\nJOIN AR_PAYMENT_SCHEDULES_ALL aps\n  ON aps.CUSTOMER_TRX_ID = rct.CUSTOMER_TRX_ID\nJOIN HZ_CUST_ACCOUNTS_ hca\n  ON rct.BILL_TO_CUSTOMER_ID = hca.CUST_ACCOUNT_ID\nJOIN HZ_PARTIES hp\n  ON hca.PARTY_ID = hp.PARTY_ID\nJOIN FUN_ALL_BUSINESS_UNITS_V bu\n  ON rct.ORG_ID = bu.BU_ID\nWHERE aps.STATUS = :P_OPEN_STATUS\n  AND (aps.GL_DATE_CLOSED IS NULL OR aps.GL_DATE_CLOSED > :P_AS_OF_DATE)\nORDER BY rct.TRX_DATE;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AR-002",
+    "family": "AR Receipts & Applications",
+    "category": "baseline_primary",
+    "prompt": "Create an Oracle Fusion SQL query to extract AR receipts and applications with Customer Name, Receipt Number, Receipt Date, Receipt Amount, Transaction Number, Applied Amount, Receipt Status. Show applied receipts and order by Receipt Date.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Receivables",
+    "report_family": "receivables_receipts_applications",
+    "schema_metadata_hits": [
+      "AR_CASH_RECEIPTS_ALL",
+      "AR_RECEIVABLE_APPLICATIONS_ALL",
+      "HZ_CUST_ACCOUNTS_",
+      "HZ_PARTIES",
+      "RA_CUSTOMER_TRX_ALL"
+    ],
+    "selected_pattern_example": "Customer invoices with outstanding balances [Oraclewings Q4]",
+    "catalog_hits": [
+      {
+        "title": "Customer invoices with outstanding balances [Oraclewings Q4]",
+        "module": "Receivables",
+        "score": 7.0357
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": 6.0357
+      },
+      {
+        "title": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+        "module": "Receivables",
+        "score": 5.8929
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  hp.PARTY_NAME AS CUSTOMER_NAME,\n  acr.RECEIPT_NUMBER AS RECEIPT_NUMBER,\n  acr.RECEIPT_DATE AS RECEIPT_DATE,\n  acr.AMOUNT AS RECEIPT_AMOUNT,\n  rct.TRX_NUMBER AS TRANSACTION_NUMBER,\n  ara.AMOUNT_APPLIED AS APPLIED_AMOUNT,\n  acr.STATUS AS RECEIPT_STATUS\nFROM AR_CASH_RECEIPTS_ALL acr\nJOIN AR_RECEIVABLE_APPLICATIONS_ALL ara\n  ON ara.CASH_RECEIPT_ID = acr.CASH_RECEIPT_ID\nJOIN RA_CUSTOMER_TRX_ALL rct\n  ON ara.APPLIED_CUSTOMER_TRX_ID = rct.CUSTOMER_TRX_ID\nJOIN HZ_CUST_ACCOUNTS_ hca\n  ON rct.BILL_TO_CUSTOMER_ID = hca.CUST_ACCOUNT_ID\nJOIN HZ_PARTIES hp\n  ON hca.PARTY_ID = hp.PARTY_ID\nWHERE ara.DISPLAY = 'Y'\nORDER BY acr.RECEIPT_DATE;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AR-003",
+    "family": "AR Aging Report",
+    "category": "baseline_primary",
+    "prompt": "Create an Oracle Fusion SQL query to extract AR aging report with Customer Name, Transaction Number, Due Date, Remaining Amount, Aging Bucket as of :P_AS_OF_DATE and order by Customer Name.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Receivables",
+    "report_family": "receivables_aging",
+    "schema_metadata_hits": [
+      "AR_PAYMENT_SCHEDULES_ALL",
+      "HZ_CUST_ACCOUNTS_",
+      "HZ_PARTIES",
+      "RA_CUSTOMER_TRX_ALL"
+    ],
+    "selected_pattern_example": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+    "catalog_hits": [
+      {
+        "title": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+        "module": "Receivables",
+        "score": 18.05
+      },
+      {
+        "title": "Customer invoices with outstanding balances [Oraclewings Q4]",
+        "module": "Receivables",
+        "score": 13.15
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": 7.45
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  hp.PARTY_NAME AS CUSTOMER_NAME,\n  rct.TRX_NUMBER AS TRANSACTION_NUMBER,\n  aps.DUE_DATE AS DUE_DATE,\n  aps.AMOUNT_DUE_REMAINING AS REMAINING_AMOUNT,\n  CASE\n    WHEN aps.DUE_DATE >= :P_AS_OF_DATE THEN 'CURRENT'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 1 AND 30 THEN '1_30'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 31 AND 60 THEN '31_60'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 61 AND 90 THEN '61_90'\n    ELSE 'OVER_90'\n  END AS AGING_BUCKET\nFROM RA_CUSTOMER_TRX_ALL rct\nJOIN AR_PAYMENT_SCHEDULES_ALL aps\n  ON aps.CUSTOMER_TRX_ID = rct.CUSTOMER_TRX_ID\nJOIN HZ_CUST_ACCOUNTS_ hca\n  ON rct.BILL_TO_CUSTOMER_ID = hca.CUST_ACCOUNT_ID\nJOIN HZ_PARTIES hp\n  ON hca.PARTY_ID = hp.PARTY_ID\nWHERE aps.STATUS = :P_OPEN_STATUS\n  AND (aps.GL_DATE_CLOSED IS NULL OR aps.GL_DATE_CLOSED > :P_AS_OF_DATE)\nORDER BY hp.PARTY_NAME;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "GL-001",
+    "family": "GL Account Balances",
+    "category": "baseline_primary",
+    "prompt": "Create an Oracle Fusion SQL query to extract GL account balances with Ledger Name, Period Name, Account Combination, Period Net Dr, Period Net Cr, Ending Balance. Filter Ledger Name = :P_LEDGER_NAME and Period Name = :P_PERIOD_NAME and order by Account Combination.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "General Ledger",
+    "report_family": "general_ledger_account_balances",
+    "schema_metadata_hits": [
+      "GL_BALANCES",
+      "GL_CODE_COMBINATIONS",
+      "GL_LEDGERS"
+    ],
+    "selected_pattern_example": "Trial balance by account [Oraclewings Q6]",
+    "catalog_hits": [
+      {
+        "title": "Trial balance by account [Oraclewings Q6]",
+        "module": "General Ledger",
+        "score": 15.9167
+      },
+      {
+        "title": "Journal entries for a specific period [Oraclewings Q5]",
+        "module": "General Ledger",
+        "score": 8.4167
+      },
+      {
+        "title": "GL TRANS EXTRACT SALES.xdm [Q1]",
+        "module": "General Ledger",
+        "score": 5.75
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  gl.NAME AS LEDGER_NAME,\n  gb.PERIOD_NAME AS PERIOD_NAME,\n  gcc.CONCATENATED_SEGMENTS AS ACCOUNT_COMBINATION,\n  gb.PERIOD_NET_DR AS PERIOD_NET_DR,\n  gb.PERIOD_NET_CR AS PERIOD_NET_CR,\n  ((NVL(gb.BEGIN_BALANCE_DR, 0) - NVL(gb.BEGIN_BALANCE_CR, 0)) + (NVL(gb.PERIOD_NET_DR, 0) - NVL(gb.PERIOD_NET_CR, 0))) AS ENDING_BALANCE\nFROM GL_BALANCES gb\nJOIN GL_CODE_COMBINATIONS gcc\n  ON gb.CODE_COMBINATION_ID = gcc.CODE_COMBINATION_ID\nJOIN GL_LEDGERS gl\n  ON gb.LEDGER_ID = gl.LEDGER_ID\nWHERE gl.NAME = :P_LEDGER_NAME\n  AND gb.PERIOD_NAME = :P_PERIOD_NAME\nORDER BY gcc.CONCATENATED_SEGMENTS;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "GL-002",
+    "family": "GL Journal Details",
+    "category": "baseline_primary",
+    "prompt": "Create an Oracle Fusion SQL query to extract GL journal details with Ledger Name, Journal Name, Period Name, Journal Source, Journal Category, Journal Status, Journal Line Number, Account Combination, Debit Amount, Credit Amount. Show posted journals for Ledger Name = :P_LEDGER_NAME and Period Name = :P_PERIOD_NAME and order by Journal Name.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "General Ledger",
+    "report_family": "general_ledger_journal_details",
+    "schema_metadata_hits": [
+      "GL_CODE_COMBINATIONS",
+      "GL_JE_HEADERS",
+      "GL_JE_LINES",
+      "GL_LEDGERS"
+    ],
+    "selected_pattern_example": "Journal entries for a specific period [Oraclewings Q5]",
+    "catalog_hits": [
+      {
+        "title": "Journal entries for a specific period [Oraclewings Q5]",
+        "module": "General Ledger",
+        "score": 16.5
+      },
+      {
+        "title": "GL TRANS EXTRACT SALES.xdm [Q1]",
+        "module": "General Ledger",
+        "score": 15.4
+      },
+      {
+        "title": "Trial balance by account [Oraclewings Q6]",
+        "module": "General Ledger",
+        "score": 5.6
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  gl.NAME AS LEDGER_NAME,\n  gjh.NAME AS JOURNAL_NAME,\n  gjh.PERIOD_NAME AS PERIOD_NAME,\n  gjh.JE_SOURCE AS JOURNAL_SOURCE,\n  gjh.JE_CATEGORY AS JOURNAL_CATEGORY,\n  gjh.STATUS AS JOURNAL_STATUS,\n  gjl.JE_LINE_NUM AS LINE_NUMBER,\n  gcc.CONCATENATED_SEGMENTS AS ACCOUNT_COMBINATION,\n  gjl.ENTERED_DR AS DEBIT_AMOUNT,\n  gjl.ENTERED_CR AS CREDIT_AMOUNT\nFROM GL_JE_HEADERS gjh\nJOIN GL_JE_LINES gjl\n  ON gjl.JE_HEADER_ID = gjh.JE_HEADER_ID\nJOIN GL_CODE_COMBINATIONS gcc\n  ON gjl.CODE_COMBINATION_ID = gcc.CODE_COMBINATION_ID\nJOIN GL_LEDGERS gl\n  ON gjh.LEDGER_ID = gl.LEDGER_ID\nWHERE gjh.STATUS = 'P'\n  AND gl.NAME = :P_LEDGER_NAME\n  AND gjh.PERIOD_NAME = :P_PERIOD_NAME\nORDER BY gjh.NAME;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "PO-001",
+    "family": "Purchase Order Details",
+    "category": "baseline_primary",
+    "prompt": "Create an Oracle Fusion SQL query to extract Purchase Order details with PO Number, PO Date, PO Status, Supplier Name, Supplier Number, Site Code, Line Number, Item Description, Ordered Quantity, Unit Price and order by PO Number.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Procurement",
+    "report_family": "procurement_purchase_order_details",
+    "schema_metadata_hits": [
+      "POZ_SUPPLIERS",
+      "POZ_SUPPLIER_SITES_ALL_M",
+      "PO_HEADERS_ALL",
+      "PO_LINES_ALL"
+    ],
+    "selected_pattern_example": "PurchasingDocumentErrorsFYINotificationsDm.xdm [Q6]",
+    "catalog_hits": [
+      {
+        "title": "PurchasingDocumentErrorsFYINotificationsDm.xdm [Q6]",
+        "module": "Procurement",
+        "score": 3.8
+      },
+      {
+        "title": "PurchasingNotificationDm.xdm [Q8]",
+        "module": "Procurement",
+        "score": 3.8
+      },
+      {
+        "title": "WCNotificationDm.xdm [Q4]",
+        "module": "Procurement",
+        "score": 3.8
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  ph.SEGMENT1 AS PO_NUMBER,\n  ph.CREATION_DATE AS PO_DATE,\n  ph.DOCUMENT_STATUS AS PO_STATUS,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  ps.SEGMENT1 AS SUPPLIER_NUMBER,\n  pssm.VENDOR_SITE_CODE AS SITE_CODE,\n  pl.LINE_NUM AS LINE_NUMBER,\n  pl.ITEM_DESCRIPTION AS ITEM_DESCRIPTION,\n  pl.QUANTITY AS ORDERED_QUANTITY,\n  pl.UNIT_PRICE AS UNIT_PRICE\nFROM PO_HEADERS_ALL ph\nJOIN PO_LINES_ALL pl\n  ON pl.PO_HEADER_ID = ph.PO_HEADER_ID\nJOIN POZ_SUPPLIERS ps\n  ON ph.VENDOR_ID = ps.VENDOR_ID\nJOIN POZ_SUPPLIER_SITES_ALL_M pssm\n  ON ph.VENDOR_SITE_ID = pssm.VENDOR_SITE_ID\nORDER BY ph.SEGMENT1;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "PO-002",
+    "family": "PO Receiving & Invoicing Match",
+    "category": "baseline_primary",
+    "prompt": "Create an Oracle Fusion SQL query to extract PO receiving and invoicing match details with PO Number, Supplier Name, Line Number, Ordered Quantity, Received Quantity, Billed Quantity, Receipt Date and order by PO Number.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "UNKNOWN",
+    "report_family": "procurement_receiving_invoicing_match",
+    "schema_metadata_hits": [
+      "POZ_SUPPLIERS",
+      "PO_HEADERS_ALL",
+      "PO_LINES_ALL",
+      "PO_LINE_LOCATIONS_ALL",
+      "RCV_TRANSACTIONS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": -2.7143
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": -2.7143
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": -3.8571
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  ph.SEGMENT1 AS PO_NUMBER,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  pl.LINE_NUM AS LINE_NUMBER,\n  pl.QUANTITY AS ORDERED_QUANTITY,\n  pll.QUANTITY_RECEIVED AS RECEIVED_QUANTITY,\n  pll.QUANTITY_BILLED AS BILLED_QUANTITY,\n  rcv.TRANSACTION_DATE AS RECEIPT_DATE\nFROM PO_HEADERS_ALL ph\nJOIN PO_LINES_ALL pl\n  ON pl.PO_HEADER_ID = ph.PO_HEADER_ID\nJOIN PO_LINE_LOCATIONS_ALL pll\n  ON pll.PO_LINE_ID = pl.PO_LINE_ID\nJOIN RCV_TRANSACTIONS rcv\n  ON rcv.PO_LINE_LOCATION_ID = pll.LINE_LOCATION_ID\nJOIN POZ_SUPPLIERS ps\n  ON ph.VENDOR_ID = ps.VENDOR_ID\nORDER BY ph.SEGMENT1;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AP-V001",
+    "family": "AP Variant",
+    "category": "baseline_variant",
+    "prompt": "Generate Oracle Fusion Payables SQL for an invoice detail report. Include: - Business Unit - Supplier Name - Supplier Number - Invoice Number - Invoice Date - Invoice Amount - Invoice Currency - Invoice Status - Accounting Date. Use Invoice Date BETWEEN :P_FROM_DATE AND :P_TO_DATE. Sort by Invoice Date.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_invoice_details",
+    "schema_metadata_hits": [
+      "AP_INVOICES_ALL",
+      "FUN_ALL_BUSINESS_UNITS_V",
+      "POZ_SUPPLIERS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 10.25
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 10.25
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": -1.7222
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  bu.BU_NAME AS BUSINESS_UNIT_NAME,\n  ai.INVOICE_NUM AS INVOICE_NUMBER,\n  ai.INVOICE_DATE AS INVOICE_DATE,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  ps.SEGMENT1 AS SUPPLIER_NUMBER,\n  ai.INVOICE_AMOUNT AS INVOICE_AMOUNT,\n  ai.INVOICE_CURRENCY_CODE AS INVOICE_CURRENCY,\n  ai.APPROVAL_STATUS AS INVOICE_STATUS,\n  ai.GL_DATE AS ACCOUNTING_DATE\nFROM AP_INVOICES_ALL ai\nJOIN POZ_SUPPLIERS ps\n  ON ai.VENDOR_ID = ps.VENDOR_ID\nJOIN FUN_ALL_BUSINESS_UNITS_V bu\n  ON ai.ORG_ID = bu.BU_ID\nWHERE ai.INVOICE_DATE BETWEEN :P_FROM_DATE AND :P_TO_DATE\nORDER BY ai.INVOICE_DATE;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AR-V001",
+    "family": "AR Variant",
+    "category": "baseline_variant",
+    "prompt": "Generate Oracle Fusion Receivables aging SQL. Include Customer Name, Transaction Number, Remaining Amount, Due Date, Aging Bucket. Use :P_AS_OF_DATE as the as-of date and order by Customer Name.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Receivables",
+    "report_family": "receivables_aging",
+    "schema_metadata_hits": [
+      "AR_PAYMENT_SCHEDULES_ALL",
+      "HZ_CUST_ACCOUNTS_",
+      "HZ_PARTIES",
+      "RA_CUSTOMER_TRX_ALL"
+    ],
+    "selected_pattern_example": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+    "catalog_hits": [
+      {
+        "title": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+        "module": "Receivables",
+        "score": 18.05
+      },
+      {
+        "title": "Customer invoices with outstanding balances [Oraclewings Q4]",
+        "module": "Receivables",
+        "score": 13.15
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": 7.45
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  hp.PARTY_NAME AS CUSTOMER_NAME,\n  rct.TRX_NUMBER AS TRANSACTION_NUMBER,\n  aps.DUE_DATE AS DUE_DATE,\n  aps.AMOUNT_DUE_REMAINING AS REMAINING_AMOUNT,\n  CASE\n    WHEN aps.DUE_DATE >= :P_AS_OF_DATE THEN 'CURRENT'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 1 AND 30 THEN '1_30'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 31 AND 60 THEN '31_60'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 61 AND 90 THEN '61_90'\n    ELSE 'OVER_90'\n  END AS AGING_BUCKET\nFROM RA_CUSTOMER_TRX_ALL rct\nJOIN AR_PAYMENT_SCHEDULES_ALL aps\n  ON aps.CUSTOMER_TRX_ID = rct.CUSTOMER_TRX_ID\nJOIN HZ_CUST_ACCOUNTS_ hca\n  ON rct.BILL_TO_CUSTOMER_ID = hca.CUST_ACCOUNT_ID\nJOIN HZ_PARTIES hp\n  ON hca.PARTY_ID = hp.PARTY_ID\nWHERE aps.STATUS = :P_OPEN_STATUS\n  AND (aps.GL_DATE_CLOSED IS NULL OR aps.GL_DATE_CLOSED > :P_AS_OF_DATE)\nORDER BY hp.PARTY_NAME;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "GL-V001",
+    "family": "GL Variant",
+    "category": "baseline_variant",
+    "prompt": "Write Oracle Fusion General Ledger SQL for posted journal detail reporting with Ledger Name, Journal Name, Period Name, Journal Source, Journal Category, Journal Status, Journal Line Number, Account Combination, Debit Amount, Credit Amount. Filter Ledger Name = :P_LEDGER_NAME and Period Name = :P_PERIOD_NAME. Sort by Journal Name.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "General Ledger",
+    "report_family": "general_ledger_journal_details",
+    "schema_metadata_hits": [
+      "GL_CODE_COMBINATIONS",
+      "GL_JE_HEADERS",
+      "GL_JE_LINES",
+      "GL_LEDGERS"
+    ],
+    "selected_pattern_example": "Journal entries for a specific period [Oraclewings Q5]",
+    "catalog_hits": [
+      {
+        "title": "Journal entries for a specific period [Oraclewings Q5]",
+        "module": "General Ledger",
+        "score": 16.5
+      },
+      {
+        "title": "GL TRANS EXTRACT SALES.xdm [Q1]",
+        "module": "General Ledger",
+        "score": 15.4
+      },
+      {
+        "title": "Trial balance by account [Oraclewings Q6]",
+        "module": "General Ledger",
+        "score": 5.6
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  gl.NAME AS LEDGER_NAME,\n  gjh.NAME AS JOURNAL_NAME,\n  gjh.PERIOD_NAME AS PERIOD_NAME,\n  gjh.JE_SOURCE AS JOURNAL_SOURCE,\n  gjh.JE_CATEGORY AS JOURNAL_CATEGORY,\n  gjh.STATUS AS JOURNAL_STATUS,\n  gjl.JE_LINE_NUM AS LINE_NUMBER,\n  gcc.CONCATENATED_SEGMENTS AS ACCOUNT_COMBINATION,\n  gjl.ENTERED_DR AS DEBIT_AMOUNT,\n  gjl.ENTERED_CR AS CREDIT_AMOUNT\nFROM GL_JE_HEADERS gjh\nJOIN GL_JE_LINES gjl\n  ON gjl.JE_HEADER_ID = gjh.JE_HEADER_ID\nJOIN GL_CODE_COMBINATIONS gcc\n  ON gjl.CODE_COMBINATION_ID = gcc.CODE_COMBINATION_ID\nJOIN GL_LEDGERS gl\n  ON gjh.LEDGER_ID = gl.LEDGER_ID\nWHERE gjh.STATUS = 'P'\n  AND gl.NAME = :P_LEDGER_NAME\n  AND gjh.PERIOD_NAME = :P_PERIOD_NAME\nORDER BY gjh.NAME;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "PO-V001",
+    "family": "PO Variant",
+    "category": "baseline_variant",
+    "prompt": "Write Oracle Fusion Purchasing SQL for a purchase order detail report with Supplier Name, Supplier Number, Site Code, PO Number, PO Date, PO Status, Line Number, Item Description, Ordered Quantity, Unit Price. Order by PO Number.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Procurement",
+    "report_family": "procurement_purchase_order_details",
+    "schema_metadata_hits": [
+      "POZ_SUPPLIERS",
+      "POZ_SUPPLIER_SITES_ALL_M",
+      "PO_HEADERS_ALL",
+      "PO_LINES_ALL"
+    ],
+    "selected_pattern_example": "PurchasingDocumentErrorsFYINotificationsDm.xdm [Q6]",
+    "catalog_hits": [
+      {
+        "title": "PurchasingDocumentErrorsFYINotificationsDm.xdm [Q6]",
+        "module": "Procurement",
+        "score": 3.8
+      },
+      {
+        "title": "PurchasingNotificationDm.xdm [Q8]",
+        "module": "Procurement",
+        "score": 3.8
+      },
+      {
+        "title": "WCNotificationDm.xdm [Q4]",
+        "module": "Procurement",
+        "score": 3.8
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  ph.SEGMENT1 AS PO_NUMBER,\n  ph.CREATION_DATE AS PO_DATE,\n  ph.DOCUMENT_STATUS AS PO_STATUS,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  ps.SEGMENT1 AS SUPPLIER_NUMBER,\n  pssm.VENDOR_SITE_CODE AS SITE_CODE,\n  pl.LINE_NUM AS LINE_NUMBER,\n  pl.ITEM_DESCRIPTION AS ITEM_DESCRIPTION,\n  pl.QUANTITY AS ORDERED_QUANTITY,\n  pl.UNIT_PRICE AS UNIT_PRICE\nFROM PO_HEADERS_ALL ph\nJOIN PO_LINES_ALL pl\n  ON pl.PO_HEADER_ID = ph.PO_HEADER_ID\nJOIN POZ_SUPPLIERS ps\n  ON ph.VENDOR_ID = ps.VENDOR_ID\nJOIN POZ_SUPPLIER_SITES_ALL_M pssm\n  ON ph.VENDOR_SITE_ID = pssm.VENDOR_SITE_ID\nORDER BY ph.SEGMENT1;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AP-N001",
+    "family": "AP Unsupported Field",
+    "category": "baseline_refusal",
+    "prompt": "Create an Oracle Fusion SQL query to extract AP payments report with Supplier Name, Invoice Number, Payment Number, Payment Date, Payment Method, Paid Amount, Bank Account Name, IBAN Number. Filter Payment Date = :P_PAYMENT_DATE.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_payments",
+    "schema_metadata_hits": [
+      "AP_CHECKS_ALL",
+      "AP_INVOICES_ALL",
+      "AP_INVOICE_PAYMENTS_ALL",
+      "POZ_SUPPLIERS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 7.0
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 7.0
+      },
+      {
+        "title": "Payment Approval Data Model.xdm [Q5]",
+        "module": "Payments",
+        "score": 0.0
+      }
+    ],
+    "generated": false,
+    "sql": "",
+    "refusal_reason": "Missing grounded support for requested fields: IBAN Number.",
+    "verifier_pass": false,
+    "verifier_reason": "",
+    "required_field_coverage": false,
+    "join_coverage": false,
+    "filter_coverage": false,
+    "ordering_coverage": false,
+    "hardcoding_pass": true,
+    "full_shape_pass": false,
+    "pass": true,
+    "pass_fail_reason": "correct_refusal"
+  },
+  {
+    "case_id": "AR-N001",
+    "family": "AR Unsupported Calculation",
+    "category": "baseline_refusal",
+    "prompt": "Create an Oracle Fusion SQL query to extract AR aging report with Customer Name, Transaction Number, Due Date, Remaining Amount, Aging Bucket, and a custom 121-150 day bucket as of :P_AS_OF_DATE.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "Receivables",
+    "report_family": "receivables_aging",
+    "schema_metadata_hits": [
+      "AR_PAYMENT_SCHEDULES_ALL",
+      "HZ_CUST_ACCOUNTS_",
+      "HZ_PARTIES",
+      "RA_CUSTOMER_TRX_ALL"
+    ],
+    "selected_pattern_example": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+    "catalog_hits": [
+      {
+        "title": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+        "module": "Receivables",
+        "score": 15.55
+      },
+      {
+        "title": "Customer invoices with outstanding balances [Oraclewings Q4]",
+        "module": "Receivables",
+        "score": 15.15
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": 9.45
+      }
+    ],
+    "generated": false,
+    "sql": "",
+    "refusal_reason": "Missing grounded support for requested calculations: Custom Aging Bucket.",
+    "verifier_pass": false,
+    "verifier_reason": "",
+    "required_field_coverage": false,
+    "join_coverage": false,
+    "filter_coverage": false,
+    "ordering_coverage": false,
+    "hardcoding_pass": true,
+    "full_shape_pass": false,
+    "pass": true,
+    "pass_fail_reason": "correct_refusal"
+  },
+  {
+    "case_id": "PO-N001",
+    "family": "PO Unsupported Field",
+    "category": "baseline_refusal",
+    "prompt": "Create an Oracle Fusion SQL query to extract PO receiving and invoicing match details with PO Number, Supplier Name, Line Number, Ordered Quantity, Received Quantity, Billed Quantity, Receipt Date, Invoiced Amount and order by PO Number.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "UNKNOWN",
+    "report_family": "procurement_receiving_invoicing_match",
+    "schema_metadata_hits": [
+      "POZ_SUPPLIERS",
+      "PO_HEADERS_ALL",
+      "PO_LINES_ALL",
+      "PO_LINE_LOCATIONS_ALL",
+      "RCV_TRANSACTIONS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": -3.0
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": -3.0
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": -4.0
+      }
+    ],
+    "generated": false,
+    "sql": "",
+    "refusal_reason": "Missing grounded support for requested fields: Invoice Line Amount.",
+    "verifier_pass": false,
+    "verifier_reason": "",
+    "required_field_coverage": false,
+    "join_coverage": false,
+    "filter_coverage": false,
+    "ordering_coverage": false,
+    "hardcoding_pass": true,
+    "full_shape_pass": false,
+    "pass": true,
+    "pass_fail_reason": "correct_refusal"
+  },
+  {
+    "case_id": "AP-S001",
+    "family": "AP Synonym Heavy Invoice Listing",
+    "category": "synonym_heavy",
+    "prompt": "Build Oracle Fusion Payables SQL for a vendor invoice header listing with BU, vendor name, vendor number, invoice num, invoice date, invoice total, transaction currency, approval status, and accounting date. Keep invoice date between :P_FROM_DATE and :P_TO_DATE and sort by invoice date.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_invoice_details",
+    "schema_metadata_hits": [
+      "AP_INVOICES_ALL",
+      "POZ_SUPPLIERS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 12.6071
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 12.6071
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": -1.2143
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  ai.INVOICE_NUM AS INVOICE_NUMBER,\n  ai.INVOICE_DATE AS INVOICE_DATE,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  ps.SEGMENT1 AS SUPPLIER_NUMBER,\n  ai.INVOICE_AMOUNT AS INVOICE_AMOUNT,\n  ai.INVOICE_CURRENCY_CODE AS INVOICE_CURRENCY,\n  ai.GL_DATE AS ACCOUNTING_DATE\nFROM AP_INVOICES_ALL ai\nJOIN POZ_SUPPLIERS ps\n  ON ai.VENDOR_ID = ps.VENDOR_ID\nWHERE ai.INVOICE_DATE BETWEEN :P_FROM_DATE AND :P_TO_DATE\nORDER BY ai.INVOICE_DATE;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AR-S001",
+    "family": "AR Synonym Heavy Transaction Listing",
+    "category": "synonym_heavy",
+    "prompt": "Generate Oracle Fusion Receivables SQL for customer invoice transactions with trx number, trx date, customer name, original amount due, outstanding amount, due date, payment status, and business unit. Show open transactions as of :P_AS_OF_DATE and order by trx date.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Receivables",
+    "report_family": "receivables_transaction_report",
+    "schema_metadata_hits": [
+      "AR_PAYMENT_SCHEDULES_ALL",
+      "FUN_ALL_BUSINESS_UNITS_V",
+      "HZ_CUST_ACCOUNTS_",
+      "HZ_PARTIES",
+      "RA_CUSTOMER_TRX_ALL"
+    ],
+    "selected_pattern_example": "Customer invoices with outstanding balances [Oraclewings Q4]",
+    "catalog_hits": [
+      {
+        "title": "Customer invoices with outstanding balances [Oraclewings Q4]",
+        "module": "Receivables",
+        "score": 13.75
+      },
+      {
+        "title": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+        "module": "Receivables",
+        "score": 10.75
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": 8.75
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  hp.PARTY_NAME AS CUSTOMER_NAME,\n  rct.TRX_NUMBER AS TRANSACTION_NUMBER,\n  rct.TRX_DATE AS TRANSACTION_DATE,\n  bu.BU_NAME AS BUSINESS_UNIT_NAME,\n  aps.AMOUNT_DUE_ORIGINAL AS AMOUNT_DUE_ORIGINAL,\n  aps.AMOUNT_DUE_REMAINING AS REMAINING_AMOUNT,\n  aps.DUE_DATE AS DUE_DATE,\n  aps.STATUS AS PAYMENT_STATUS\nFROM RA_CUSTOMER_TRX_ALL rct\nJOIN AR_PAYMENT_SCHEDULES_ALL aps\n  ON aps.CUSTOMER_TRX_ID = rct.CUSTOMER_TRX_ID\nJOIN HZ_CUST_ACCOUNTS_ hca\n  ON rct.BILL_TO_CUSTOMER_ID = hca.CUST_ACCOUNT_ID\nJOIN HZ_PARTIES hp\n  ON hca.PARTY_ID = hp.PARTY_ID\nJOIN FUN_ALL_BUSINESS_UNITS_V bu\n  ON rct.ORG_ID = bu.BU_ID\nWHERE aps.STATUS = :P_OPEN_STATUS\n  AND (aps.GL_DATE_CLOSED IS NULL OR aps.GL_DATE_CLOSED > :P_AS_OF_DATE);",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "GL-S001",
+    "family": "GL Synonym Heavy Journal Listing",
+    "category": "synonym_heavy",
+    "prompt": "Write Oracle Fusion GL SQL for posted journals with ledger, period, journal source, journal category, journal line, concatenated segments, entered debit, and entered credit. Use Ledger Name = :P_LEDGER_NAME and Period Name = :P_PERIOD_NAME and sort by journal name.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "General Ledger",
+    "report_family": "general_ledger_journal_details",
+    "schema_metadata_hits": [
+      "GL_CODE_COMBINATIONS",
+      "GL_JE_HEADERS",
+      "GL_JE_LINES",
+      "GL_LEDGERS"
+    ],
+    "selected_pattern_example": "Journal entries for a specific period [Oraclewings Q5]",
+    "catalog_hits": [
+      {
+        "title": "Journal entries for a specific period [Oraclewings Q5]",
+        "module": "General Ledger",
+        "score": 16.5
+      },
+      {
+        "title": "GL TRANS EXTRACT SALES.xdm [Q1]",
+        "module": "General Ledger",
+        "score": 15.6667
+      },
+      {
+        "title": "Trial balance by account [Oraclewings Q6]",
+        "module": "General Ledger",
+        "score": 5.7778
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  gl.NAME AS LEDGER_NAME,\n  gjh.NAME AS JOURNAL_NAME,\n  gjh.PERIOD_NAME AS PERIOD_NAME,\n  gjh.JE_SOURCE AS JOURNAL_SOURCE,\n  gjh.JE_CATEGORY AS JOURNAL_CATEGORY,\n  gjl.JE_LINE_NUM AS LINE_NUMBER,\n  gcc.CONCATENATED_SEGMENTS AS ACCOUNT_COMBINATION,\n  gjl.ENTERED_DR AS DEBIT_AMOUNT,\n  gjl.ENTERED_CR AS CREDIT_AMOUNT\nFROM GL_JE_HEADERS gjh\nJOIN GL_JE_LINES gjl\n  ON gjl.JE_HEADER_ID = gjh.JE_HEADER_ID\nJOIN GL_CODE_COMBINATIONS gcc\n  ON gjl.CODE_COMBINATION_ID = gcc.CODE_COMBINATION_ID\nJOIN GL_LEDGERS gl\n  ON gjh.LEDGER_ID = gl.LEDGER_ID\nWHERE gjh.STATUS = 'P'\n  AND gl.NAME = :P_LEDGER_NAME\n  AND gjh.PERIOD_NAME = :P_PERIOD_NAME\nORDER BY gjh.NAME;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "PO-A001",
+    "family": "Procurement Ambiguous PO Detail",
+    "category": "ambiguous_procurement",
+    "prompt": "Generate Oracle Fusion SQL for supplier purchase order reporting with PO number, vendor name, vendor number, site code, line number, item description, ordered quantity, unit price, and PO status. Sort by PO number.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Procurement",
+    "report_family": "procurement_purchase_order_details",
+    "schema_metadata_hits": [
+      "POZ_SUPPLIERS",
+      "POZ_SUPPLIER_SITES_ALL_M",
+      "PO_HEADERS_ALL",
+      "PO_LINES_ALL"
+    ],
+    "selected_pattern_example": "PurchasingDocumentErrorsFYINotificationsDm.xdm [Q6]",
+    "catalog_hits": [
+      {
+        "title": "PurchasingDocumentErrorsFYINotificationsDm.xdm [Q6]",
+        "module": "Procurement",
+        "score": 3.8889
+      },
+      {
+        "title": "PurchasingNotificationDm.xdm [Q8]",
+        "module": "Procurement",
+        "score": 3.8889
+      },
+      {
+        "title": "WCNotificationDm.xdm [Q4]",
+        "module": "Procurement",
+        "score": 3.8889
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  ph.SEGMENT1 AS PO_NUMBER,\n  ph.DOCUMENT_STATUS AS PO_STATUS,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  ps.SEGMENT1 AS SUPPLIER_NUMBER,\n  pssm.VENDOR_SITE_CODE AS SITE_CODE,\n  pl.LINE_NUM AS LINE_NUMBER,\n  pl.ITEM_DESCRIPTION AS ITEM_DESCRIPTION,\n  pl.QUANTITY AS ORDERED_QUANTITY,\n  pl.UNIT_PRICE AS UNIT_PRICE\nFROM PO_HEADERS_ALL ph\nJOIN PO_LINES_ALL pl\n  ON pl.PO_HEADER_ID = ph.PO_HEADER_ID\nJOIN POZ_SUPPLIERS ps\n  ON ph.VENDOR_ID = ps.VENDOR_ID\nJOIN POZ_SUPPLIER_SITES_ALL_M pssm\n  ON ph.VENDOR_SITE_ID = pssm.VENDOR_SITE_ID\nORDER BY ph.SEGMENT1;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "PO-A002",
+    "family": "Procurement Ambiguous Three-Way Match",
+    "category": "ambiguous_procurement",
+    "prompt": "Generate Oracle Fusion SQL for a 3-way match receiving report with purchase order number, supplier name, line number, ordered quantity, received quantity, billed quantity, and receipt date. Order by purchase order number.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "procurement_receiving_invoicing_match",
+    "schema_metadata_hits": [
+      "POZ_SUPPLIERS",
+      "PO_HEADERS_ALL",
+      "PO_LINES_ALL",
+      "PO_LINE_LOCATIONS_ALL",
+      "RCV_TRANSACTIONS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": -1.9643
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": -1.9643
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": -3.8571
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  ph.SEGMENT1 AS PO_NUMBER,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  pl.LINE_NUM AS LINE_NUMBER,\n  pl.QUANTITY AS ORDERED_QUANTITY,\n  pll.QUANTITY_RECEIVED AS RECEIVED_QUANTITY,\n  pll.QUANTITY_BILLED AS BILLED_QUANTITY,\n  rcv.TRANSACTION_DATE AS RECEIPT_DATE\nFROM PO_HEADERS_ALL ph\nJOIN PO_LINES_ALL pl\n  ON pl.PO_HEADER_ID = ph.PO_HEADER_ID\nJOIN PO_LINE_LOCATIONS_ALL pll\n  ON pll.PO_LINE_ID = pl.PO_LINE_ID\nJOIN RCV_TRANSACTIONS rcv\n  ON rcv.PO_LINE_LOCATION_ID = pll.LINE_LOCATION_ID\nJOIN POZ_SUPPLIERS ps\n  ON ph.VENDOR_ID = ps.VENDOR_ID\nORDER BY ph.SEGMENT1;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AP-D001",
+    "family": "AP Date Variant",
+    "category": "date_filter_variant",
+    "prompt": "Create Oracle Fusion AP invoice detail SQL with Business Unit, Invoice Number, Supplier Name, Invoice Amount, Invoice Currency, Invoice Status, and Accounting Date for invoices dated from :P_FROM_DATE to :P_TO_DATE. Order by Invoice Date.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_invoice_details",
+    "schema_metadata_hits": [
+      "AP_INVOICES_ALL",
+      "FUN_ALL_BUSINESS_UNITS_V",
+      "POZ_SUPPLIERS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 9.9167
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 9.9167
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": -1.5
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  bu.BU_NAME AS BUSINESS_UNIT_NAME,\n  ai.INVOICE_NUM AS INVOICE_NUMBER,\n  ai.INVOICE_DATE AS INVOICE_DATE,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  ai.INVOICE_AMOUNT AS INVOICE_AMOUNT,\n  ai.INVOICE_CURRENCY_CODE AS INVOICE_CURRENCY,\n  ai.APPROVAL_STATUS AS INVOICE_STATUS,\n  ai.GL_DATE AS ACCOUNTING_DATE\nFROM AP_INVOICES_ALL ai\nJOIN POZ_SUPPLIERS ps\n  ON ai.VENDOR_ID = ps.VENDOR_ID\nJOIN FUN_ALL_BUSINESS_UNITS_V bu\n  ON ai.ORG_ID = bu.BU_ID\nWHERE ai.INVOICE_DATE BETWEEN :P_FROM_DATE AND :P_TO_DATE\nORDER BY ai.INVOICE_DATE;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AR-D001",
+    "family": "AR Date Variant",
+    "category": "date_filter_variant",
+    "prompt": "Create Oracle Fusion AR aging SQL with Customer Name, Transaction Number, Due Date, Remaining Amount, and Aging Bucket using :P_AS_OF_DATE as the as-of date. Order by Customer Name.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "Receivables",
+    "report_family": "receivables_aging",
+    "schema_metadata_hits": [
+      "AR_PAYMENT_SCHEDULES_ALL",
+      "HZ_CUST_ACCOUNTS_",
+      "HZ_PARTIES",
+      "RA_CUSTOMER_TRX_ALL"
+    ],
+    "selected_pattern_example": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+    "catalog_hits": [
+      {
+        "title": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+        "module": "Receivables",
+        "score": 18.05
+      },
+      {
+        "title": "Customer invoices with outstanding balances [Oraclewings Q4]",
+        "module": "Receivables",
+        "score": 13.15
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": 7.45
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  hp.PARTY_NAME AS CUSTOMER_NAME,\n  rct.TRX_NUMBER AS TRANSACTION_NUMBER,\n  aps.DUE_DATE AS DUE_DATE,\n  aps.AMOUNT_DUE_REMAINING AS REMAINING_AMOUNT,\n  CASE\n    WHEN aps.DUE_DATE >= :P_AS_OF_DATE THEN 'CURRENT'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 1 AND 30 THEN '1_30'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 31 AND 60 THEN '31_60'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 61 AND 90 THEN '61_90'\n    ELSE 'OVER_90'\n  END AS AGING_BUCKET\nFROM RA_CUSTOMER_TRX_ALL rct\nJOIN AR_PAYMENT_SCHEDULES_ALL aps\n  ON aps.CUSTOMER_TRX_ID = rct.CUSTOMER_TRX_ID\nJOIN HZ_CUST_ACCOUNTS_ hca\n  ON rct.BILL_TO_CUSTOMER_ID = hca.CUST_ACCOUNT_ID\nJOIN HZ_PARTIES hp\n  ON hca.PARTY_ID = hp.PARTY_ID\nWHERE aps.STATUS = :P_OPEN_STATUS\n  AND (aps.GL_DATE_CLOSED IS NULL OR aps.GL_DATE_CLOSED > :P_AS_OF_DATE)\nORDER BY hp.PARTY_NAME;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "GL-D001",
+    "family": "GL Date/Bind Variant",
+    "category": "date_filter_variant",
+    "prompt": "Generate Oracle Fusion General Ledger balance SQL with Ledger Name, Period Name, Account Combination, Period Net Dr, Period Net Cr, and Ending Balance for ledger :P_LEDGER_NAME and period :P_PERIOD_NAME. Sort by account combination.",
+    "expected_generated": true,
+    "route_selected": "sql_generation",
+    "module_selected": "General Ledger",
+    "report_family": "general_ledger_account_balances",
+    "schema_metadata_hits": [
+      "GL_BALANCES",
+      "GL_CODE_COMBINATIONS",
+      "GL_LEDGERS"
+    ],
+    "selected_pattern_example": "Trial balance by account [Oraclewings Q6]",
+    "catalog_hits": [
+      {
+        "title": "Trial balance by account [Oraclewings Q6]",
+        "module": "General Ledger",
+        "score": 15.9167
+      },
+      {
+        "title": "Journal entries for a specific period [Oraclewings Q5]",
+        "module": "General Ledger",
+        "score": 8.4167
+      },
+      {
+        "title": "GL TRANS EXTRACT SALES.xdm [Q1]",
+        "module": "General Ledger",
+        "score": 5.75
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  gl.NAME AS LEDGER_NAME,\n  gb.PERIOD_NAME AS PERIOD_NAME,\n  gcc.CONCATENATED_SEGMENTS AS ACCOUNT_COMBINATION,\n  gb.PERIOD_NET_DR AS PERIOD_NET_DR,\n  gb.PERIOD_NET_CR AS PERIOD_NET_CR,\n  ((NVL(gb.BEGIN_BALANCE_DR, 0) - NVL(gb.BEGIN_BALANCE_CR, 0)) + (NVL(gb.PERIOD_NET_DR, 0) - NVL(gb.PERIOD_NET_CR, 0))) AS ENDING_BALANCE\nFROM GL_BALANCES gb\nJOIN GL_CODE_COMBINATIONS gcc\n  ON gb.CODE_COMBINATION_ID = gcc.CODE_COMBINATION_ID\nJOIN GL_LEDGERS gl\n  ON gb.LEDGER_ID = gl.LEDGER_ID\nWHERE gl.NAME = :P_LEDGER_NAME\n  AND gb.PERIOD_NAME = :P_PERIOD_NAME\nORDER BY gcc.CONCATENATED_SEGMENTS;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": true,
+    "pass_fail_reason": "ok"
+  },
+  {
+    "case_id": "AP-U001",
+    "family": "AP Unsupported Swift Code",
+    "category": "unsupported_field_request",
+    "prompt": "Create Oracle Fusion SQL for AP payments with Supplier Name, Invoice Number, Payment Number, Payment Date, Payment Method, Paid Amount, Bank Account Name, and SWIFT Code. Filter Payment Date = :P_PAYMENT_DATE.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_payments",
+    "schema_metadata_hits": [
+      "AP_CHECKS_ALL",
+      "AP_INVOICES_ALL",
+      "AP_INVOICE_PAYMENTS_ALL",
+      "POZ_SUPPLIERS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 7.2857
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 7.2857
+      },
+      {
+        "title": "Payment Approval Data Model.xdm [Q5]",
+        "module": "Payments",
+        "score": 0.1429
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME,\n  ai.INVOICE_NUM AS INVOICE_NUMBER,\n  ac.CHECK_NUMBER AS PAYMENT_NUMBER,\n  ac.CHECK_DATE AS PAYMENT_DATE,\n  ac.PAYMENT_METHOD_LOOKUP_CODE AS PAYMENT_METHOD,\n  aip.AMOUNT AS PAID_AMOUNT,\n  ac.BANK_ACCOUNT_NAME AS BANK_ACCOUNT_NAME\nFROM AP_INVOICE_PAYMENTS_ALL aip\nJOIN AP_INVOICES_ALL ai\n  ON aip.INVOICE_ID = ai.INVOICE_ID\nJOIN AP_CHECKS_ALL ac\n  ON aip.CHECK_ID = ac.CHECK_ID\nJOIN POZ_SUPPLIERS ps\n  ON ac.VENDOR_ID = ps.VENDOR_ID\nWHERE ac.CHECK_DATE = :P_PAYMENT_DATE;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": false,
+    "pass_fail_reason": "expected_specific_refusal_but_generated"
+  },
+  {
+    "case_id": "GL-U001",
+    "family": "GL Unsupported Approval User",
+    "category": "unsupported_field_request",
+    "prompt": "Create Oracle Fusion SQL for posted GL journal details with Ledger Name, Journal Name, Journal Status, Journal Line Number, Account Combination, Debit Amount, Credit Amount, and Journal Approver User. Filter Ledger Name = :P_LEDGER_NAME and Period Name = :P_PERIOD_NAME.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "General Ledger",
+    "report_family": "general_ledger_journal_details",
+    "schema_metadata_hits": [
+      "GL_CODE_COMBINATIONS",
+      "GL_JE_HEADERS",
+      "GL_JE_LINES",
+      "GL_LEDGERS"
+    ],
+    "selected_pattern_example": "Journal entries for a specific period [Oraclewings Q5]",
+    "catalog_hits": [
+      {
+        "title": "Journal entries for a specific period [Oraclewings Q5]",
+        "module": "General Ledger",
+        "score": 17.8333
+      },
+      {
+        "title": "GL TRANS EXTRACT SALES.xdm [Q1]",
+        "module": "General Ledger",
+        "score": 12.8333
+      },
+      {
+        "title": "Trial balance by account [Oraclewings Q6]",
+        "module": "General Ledger",
+        "score": 8.0
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  gl.NAME AS LEDGER_NAME,\n  gjh.NAME AS JOURNAL_NAME,\n  gjh.PERIOD_NAME AS PERIOD_NAME,\n  gjh.STATUS AS JOURNAL_STATUS,\n  gjl.JE_LINE_NUM AS LINE_NUMBER,\n  gcc.CONCATENATED_SEGMENTS AS ACCOUNT_COMBINATION,\n  gjl.ENTERED_DR AS DEBIT_AMOUNT,\n  gjl.ENTERED_CR AS CREDIT_AMOUNT\nFROM GL_JE_HEADERS gjh\nJOIN GL_JE_LINES gjl\n  ON gjl.JE_HEADER_ID = gjh.JE_HEADER_ID\nJOIN GL_CODE_COMBINATIONS gcc\n  ON gjl.CODE_COMBINATION_ID = gcc.CODE_COMBINATION_ID\nJOIN GL_LEDGERS gl\n  ON gjh.LEDGER_ID = gl.LEDGER_ID\nWHERE gjh.STATUS = 'P'\n  AND gl.NAME = :P_LEDGER_NAME\n  AND gjh.PERIOD_NAME = :P_PERIOD_NAME;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": false,
+    "pass_fail_reason": "expected_specific_refusal_but_generated"
+  },
+  {
+    "case_id": "AR-B001",
+    "family": "AR Unsupported Custom Bucket 151-180",
+    "category": "unsupported_custom_bucket",
+    "prompt": "Create Oracle Fusion SQL for AR aging with Customer Name, Transaction Number, Due Date, Remaining Amount, Aging Bucket, and a custom 151-180 day bucket as of :P_AS_OF_DATE.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "Receivables",
+    "report_family": "receivables_aging",
+    "schema_metadata_hits": [
+      "AR_PAYMENT_SCHEDULES_ALL",
+      "HZ_CUST_ACCOUNTS_",
+      "HZ_PARTIES",
+      "RA_CUSTOMER_TRX_ALL"
+    ],
+    "selected_pattern_example": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+    "catalog_hits": [
+      {
+        "title": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+        "module": "Receivables",
+        "score": 15.55
+      },
+      {
+        "title": "Customer invoices with outstanding balances [Oraclewings Q4]",
+        "module": "Receivables",
+        "score": 15.15
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": 9.45
+      }
+    ],
+    "generated": false,
+    "sql": "",
+    "refusal_reason": "Missing grounded support for requested calculations: Custom Aging Bucket.",
+    "verifier_pass": false,
+    "verifier_reason": "",
+    "required_field_coverage": false,
+    "join_coverage": false,
+    "filter_coverage": false,
+    "ordering_coverage": false,
+    "hardcoding_pass": true,
+    "full_shape_pass": false,
+    "pass": true,
+    "pass_fail_reason": "correct_refusal"
+  },
+  {
+    "case_id": "AR-B002",
+    "family": "AR Unsupported Named Risk Bucket",
+    "category": "unsupported_custom_bucket",
+    "prompt": "Create Oracle Fusion SQL for AR aging with Customer Name, Transaction Number, Due Date, Remaining Amount, Aging Bucket, and a custom High Risk bucket for balances older than 120 days as of :P_AS_OF_DATE.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "Receivables",
+    "report_family": "receivables_aging",
+    "schema_metadata_hits": [
+      "AR_PAYMENT_SCHEDULES_ALL",
+      "HZ_CUST_ACCOUNTS_",
+      "HZ_PARTIES",
+      "RA_CUSTOMER_TRX_ALL"
+    ],
+    "selected_pattern_example": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+    "catalog_hits": [
+      {
+        "title": "AR aging report by customer and aging bucket [Oraclewings Q14]",
+        "module": "Receivables",
+        "score": 15.55
+      },
+      {
+        "title": "Customer invoices with outstanding balances [Oraclewings Q4]",
+        "module": "Receivables",
+        "score": 15.15
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": 9.45
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  hp.PARTY_NAME AS CUSTOMER_NAME,\n  rct.TRX_NUMBER AS TRANSACTION_NUMBER,\n  aps.DUE_DATE AS DUE_DATE,\n  aps.AMOUNT_DUE_REMAINING AS REMAINING_AMOUNT,\n  CASE\n    WHEN aps.DUE_DATE >= :P_AS_OF_DATE THEN 'CURRENT'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 1 AND 30 THEN '1_30'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 31 AND 60 THEN '31_60'\n    WHEN :P_AS_OF_DATE - aps.DUE_DATE BETWEEN 61 AND 90 THEN '61_90'\n    ELSE 'OVER_90'\n  END AS AGING_BUCKET\nFROM RA_CUSTOMER_TRX_ALL rct\nJOIN AR_PAYMENT_SCHEDULES_ALL aps\n  ON aps.CUSTOMER_TRX_ID = rct.CUSTOMER_TRX_ID\nJOIN HZ_CUST_ACCOUNTS_ hca\n  ON rct.BILL_TO_CUSTOMER_ID = hca.CUST_ACCOUNT_ID\nJOIN HZ_PARTIES hp\n  ON hca.PARTY_ID = hp.PARTY_ID\nWHERE aps.STATUS = :P_OPEN_STATUS\n  AND (aps.GL_DATE_CLOSED IS NULL OR aps.GL_DATE_CLOSED > :P_AS_OF_DATE);",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": false,
+    "pass_fail_reason": "expected_specific_refusal_but_generated"
+  },
+  {
+    "case_id": "MX-001",
+    "family": "Mixed AP Procurement Shape",
+    "category": "mixed_module",
+    "prompt": "Create Oracle Fusion SQL to extract AP invoice details with Invoice Number, Supplier Name, Invoice Date, Invoice Amount, Receipt Date, and Received Quantity for matched purchase order receipts. Filter Invoice Date between :P_FROM_DATE and :P_TO_DATE.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_invoice_details",
+    "schema_metadata_hits": [
+      "AP_INVOICES_ALL",
+      "POZ_SUPPLIERS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 13.0833
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 13.0833
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": -0.1667
+      }
+    ],
+    "generated": false,
+    "sql": "",
+    "refusal_reason": "Missing grounded support for requested fields: Receipt Date, Received Quantity.",
+    "verifier_pass": false,
+    "verifier_reason": "",
+    "required_field_coverage": false,
+    "join_coverage": false,
+    "filter_coverage": false,
+    "ordering_coverage": false,
+    "hardcoding_pass": true,
+    "full_shape_pass": false,
+    "pass": true,
+    "pass_fail_reason": "correct_refusal"
+  },
+  {
+    "case_id": "MX-002",
+    "family": "Mixed GL AR Shape",
+    "category": "mixed_module",
+    "prompt": "Create Oracle Fusion SQL to extract GL journal details with Ledger Name, Journal Name, Account Combination, Debit Amount, Credit Amount, Customer Name, and Remaining Amount for open receivables as of :P_AS_OF_DATE.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "General Ledger",
+    "report_family": "general_ledger_journal_details",
+    "schema_metadata_hits": [
+      "GL_CODE_COMBINATIONS",
+      "GL_JE_HEADERS",
+      "GL_JE_LINES",
+      "GL_LEDGERS"
+    ],
+    "selected_pattern_example": "Journal entries for a specific period [Oraclewings Q5]",
+    "catalog_hits": [
+      {
+        "title": "Journal entries for a specific period [Oraclewings Q5]",
+        "module": "General Ledger",
+        "score": 14.2143
+      },
+      {
+        "title": "GL TRANS EXTRACT SALES.xdm [Q1]",
+        "module": "General Ledger",
+        "score": 11.9286
+      },
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 7.6786
+      }
+    ],
+    "generated": false,
+    "sql": "",
+    "refusal_reason": "Missing grounded support for requested fields: Customer Name, Remaining Amount.",
+    "verifier_pass": false,
+    "verifier_reason": "",
+    "required_field_coverage": false,
+    "join_coverage": false,
+    "filter_coverage": false,
+    "ordering_coverage": false,
+    "hardcoding_pass": true,
+    "full_shape_pass": false,
+    "pass": true,
+    "pass_fail_reason": "correct_refusal"
+  },
+  {
+    "case_id": "ED-001",
+    "family": "Logical SQL Refusal",
+    "category": "edge_specific_refusal",
+    "prompt": "Create Oracle Fusion OTBI logical SQL for AP invoice reporting with Supplier Name and Invoice Number.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_invoice_details",
+    "schema_metadata_hits": [
+      "AP_INVOICES_ALL",
+      "POZ_SUPPLIERS"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 15.75
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": 15.75
+      },
+      {
+        "title": "AR INVOICE EXTRACT.xdm [Q1]",
+        "module": "Receivables",
+        "score": 2.5
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  ai.INVOICE_NUM AS INVOICE_NUMBER,\n  COALESCE(ps.DF_COMPANY_NAME, ps.DF_LEGAL_NAME, ps.TAX_REPORTING_NAME) AS SUPPLIER_NAME\nFROM AP_INVOICES_ALL ai\nJOIN POZ_SUPPLIERS ps\n  ON ai.VENDOR_ID = ps.VENDOR_ID;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": false,
+    "pass_fail_reason": "expected_specific_refusal_but_generated"
+  },
+  {
+    "case_id": "ED-002",
+    "family": "PLSQL Refusal",
+    "category": "edge_specific_refusal",
+    "prompt": "Create PL/SQL package code for Oracle Fusion AP payments reporting with Payment Number and Payment Date.",
+    "expected_generated": false,
+    "route_selected": "sql_generation",
+    "module_selected": "Payables",
+    "report_family": "payables_payments",
+    "schema_metadata_hits": [
+      "AP_CHECKS_ALL",
+      "AP_INVOICES_ALL",
+      "AP_INVOICE_PAYMENTS_ALL"
+    ],
+    "selected_pattern_example": "AP INVOICE EXTRACT.xdm [Q1]",
+    "catalog_hits": [
+      {
+        "title": "AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": -4.5833
+      },
+      {
+        "title": "copy of AP INVOICE EXTRACT.xdm [Q1]",
+        "module": "Payables",
+        "score": -4.5833
+      },
+      {
+        "title": "AP aging report by supplier [Oraclewings Q2]",
+        "module": "Payables",
+        "score": -4.5833
+      }
+    ],
+    "generated": true,
+    "sql": "SELECT\n  ac.CHECK_NUMBER AS PAYMENT_NUMBER,\n  ac.CHECK_DATE AS PAYMENT_DATE\nFROM AP_INVOICE_PAYMENTS_ALL aip\nJOIN AP_INVOICES_ALL ai\n  ON aip.INVOICE_ID = ai.INVOICE_ID\nJOIN AP_CHECKS_ALL ac\n  ON aip.CHECK_ID = ac.CHECK_ID\nJOIN POZ_SUPPLIERS ps\n  ON ac.VENDOR_ID = ps.VENDOR_ID\nWHERE ac.CHECK_DATE = :P_PAYMENT_DATE;",
+    "refusal_reason": "",
+    "verifier_pass": true,
+    "verifier_reason": "",
+    "required_field_coverage": true,
+    "join_coverage": true,
+    "filter_coverage": true,
+    "ordering_coverage": true,
+    "hardcoding_pass": true,
+    "full_shape_pass": true,
+    "pass": false,
+    "pass_fail_reason": "expected_specific_refusal_but_generated"
+  }
+]

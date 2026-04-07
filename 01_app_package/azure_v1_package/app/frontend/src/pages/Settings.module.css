@@ -1,0 +1,135 @@
+:root {
+  --neon-cyan: #00ffcc;
+  --neon-blue: #0066ff;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.container {
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, #0a1128, #000);
+  color: #fff;
+  padding: 40px;
+  font-family: 'Inter', sans-serif;
+}
+
+.header {
+  margin-bottom: 40px;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.titleSection h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(45deg, var(--neon-cyan), var(--neon-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
+
+.titleSection p {
+  opacity: 0.6;
+  font-size: 1.1rem;
+}
+
+.content {
+  display: grid;
+  gap: 30px;
+}
+
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0, 255, 204, 0.3);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.icon {
+  color: var(--neon-cyan);
+}
+
+.keyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  margin-bottom: 15px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.keyItem:hover {
+  background: rgba(0, 255, 204, 0.05);
+  border-color: rgba(0, 255, 204, 0.2);
+}
+
+.toolButton {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolButton:hover {
+  background: var(--neon-cyan);
+  color: #000;
+  border-color: var(--neon-cyan);
+}
+
+.newKeyBox {
+  margin-top: 30px;
+  padding: 25px;
+  border: 2px solid var(--neon-cyan);
+  border-radius: 16px;
+  background: rgba(0, 255, 204, 0.02);
+  animation: slideInUp 0.5s ease-out;
+}
+
+.applyButton {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background: var(--neon-cyan);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+  transition: all 0.2s ease;
+}
+
+.applyButton:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 30px rgba(0, 255, 204, 0.6);
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}

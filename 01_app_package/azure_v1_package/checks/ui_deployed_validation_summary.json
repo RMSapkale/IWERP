@@ -1,0 +1,58 @@
+{
+  "run_label": "v1_ui_local_validation",
+  "generated_at": "2026-04-06T07:58:06.873043+00:00",
+  "base_url": "http://127.0.0.1:8000",
+  "tenant_name": "UI V1 Validation 1775462260",
+  "total_cases": 21,
+  "passed_cases": 21,
+  "failed_cases": 0,
+  "pass_rate_pct": 100.0,
+  "duration_sec": 26.22,
+  "per_category": {
+    "sql": {
+      "total": 3,
+      "pass": 3,
+      "fail": 0
+    },
+    "fast_formula": {
+      "total": 3,
+      "pass": 3,
+      "fail": 0
+    },
+    "summary": {
+      "total": 5,
+      "pass": 5,
+      "fail": 0
+    },
+    "procedure": {
+      "total": 5,
+      "pass": 5,
+      "fail": 0
+    },
+    "troubleshooting": {
+      "total": 5,
+      "pass": 5,
+      "fail": 0
+    }
+  },
+  "failure_reasons": {},
+  "ui_rendering_issues": [],
+  "failed_case_prompts": [],
+  "accepted_guarded_refusals": [
+    {
+      "prompt": "Create an Oracle Fusion SQL query to extract AP invoice distribution details. Include Invoice Number, Supplier Name, Distribution Line Number, Distribution Amount, Natural Account Segment, Cost Center, Liability Account. Show only validated and accounted invoices.",
+      "category": "sql",
+      "notes": "Full-shape SQL is preferred; safe refusal is acceptable if grounded joins/fields/filters are insufficient."
+    },
+    {
+      "prompt": "Create a Fast Formula for payroll gratuity eligibility and payout logic with explicit RETURN.",
+      "category": "fast_formula",
+      "notes": "Guarded refusal is acceptable if gratuity formula grounding is insufficient."
+    },
+    {
+      "prompt": "what is payroll gratuity?",
+      "category": "summary",
+      "notes": "Concept answer is preferred; clean refusal is acceptable if exact gratuity grounding is absent."
+    }
+  ]
+}

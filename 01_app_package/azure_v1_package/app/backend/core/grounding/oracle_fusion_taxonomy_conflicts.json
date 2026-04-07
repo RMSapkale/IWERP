@@ -1,0 +1,12 @@
+{
+  "prefix_conflicts": {
+    "CTO": [
+      "CRM",
+      "SCM"
+    ],
+    "FV": [
+      "Financials",
+      "Invoicing"
+    ]
+  }
+}

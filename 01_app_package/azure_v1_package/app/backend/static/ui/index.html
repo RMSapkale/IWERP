@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oracle Fusion SLM V2 | Testing Console</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="dark-mode">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="v2-badge">V2</span>
+                <h1>Oracle Fusion <span>SLM</span></h1>
+            </div>
+            <nav>
+                <div class="nav-item active" data-tab="chat">Chat Console</div>
+                <div class="nav-item" data-tab="sql">SQL Forge (3000+)</div>
+                <div class="nav-item" data-tab="traces">RRF Visualizer</div>
+                <div class="nav-item" data-tab="settings">OracleWings.ai</div>
+                <div class="nav-item" data-tab="security">Security</div>
+            </nav>
+            <div class="status-panel">
+                <div class="status-item">
+                    <span class="dot pulse"></span>
+                    <span>V2 Training Active</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <header>
+                <div class="breadcrumb">V2 Phase 4 / <span id="current-tab-name">Chat Console</span></div>
+                <div class="user-meta">Tenant: <b>demo</b></div>
+            </header>
+
+            <section id="chat-tab" class="tab-content active">
+                <div class="chat-container">
+                    <div id="messages" class="messages scrollbar-custom">
+                        <div class="message assistant glass">
+                            <p>Assistant initialized. System ready for V2 Retrieval (RAG-Fusion + Table Conversion).</p>
+                        </div>
+                    </div>
+                    <div class="input-area glass">
+                        <textarea id="user-input"
+                            placeholder="Ask a complex Oracle Fusion question (e.g., Generate a 3000-line AR/AP join)..."
+                            rows="1"></textarea>
+                        <button id="send-btn">Generate</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sql-tab" class="tab-content">
+                <div class="sql-viewer glass">
+                    <div class="viewer-header">
+                        <h3>Extreme SQL Generator</h3>
+                        <div class="actions">
+                            <button class="btn-sm">Optimized</button>
+                            <button class="btn-sm">Oracle dialect</button>
+                        </div>
+                    </div>
+                    <pre
+                        class="scrollbar-custom"><code id="sql-output" class="language-sql">-- Massive SQL Query will appear here after generation...</code></pre>
+                </div>
+            </section>
+
+            <section id="traces-tab" class="tab-content">
+                <div class="trace-explorer glass">
+                    <h3>Reciprocal Rank Fusion (RRF) Traces</h3>
+                    <div id="rrf-viz" class="viz-container">
+                        <!-- RRF charts will be injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="settings-tab" class="tab-content">
+                <div class="settings-grid glass">
+                    <h3>Synchronize with OracleWings.ai</h3>
+                    <div class="field">
+                        <label>OracleWings API Key</label>
+                        <input type="password" placeholder="sk-wings-................">
+                    </div>
+                    <button class="btn-primary">Connect Account</button>
+                </div>
+            </section>
+
+            <section id="security-tab" class="tab-content">
+                <div class="settings-grid glass">
+                    <h3>API Key Management</h3>
+                    <p class="text-dim">Rotate your secret API key. Warning: Previous keys will be invalidated
+                        immediately.</p>
+                    <div class="key-display glass" id="new-key-area"
+                        style="display:none; margin: 1rem 0; padding: 1rem; border: 1px dashed var(--primary);">
+                        <label>New API Key:</label>
+                        <code id="new-api-key-val" style="color: var(--accent); font-weight:bold;"></code>
+                    </div>
+                    <button id="rotate-key-btn" class="btn-primary" style="background: var(--accent);">Generate New API
+                        Key</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Login Modal -->
+        <div id="login-modal" class="modal-overlay">
+            <div class="modal-content glass">
+                <h2>V2 Console Login</h2>
+                <div class="field">
+                    <label>Tenant ID</label>
+                    <input type="text" id="login-tenant" value="demo">
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••">
+                </div>
+                <button id="login-btn" class="btn-primary">Login</button>
+                <p id="login-error" style="color: #ef4444; margin-top: 1rem; display:none;"></p>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>

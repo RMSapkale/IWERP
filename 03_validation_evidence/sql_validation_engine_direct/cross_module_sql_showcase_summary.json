@@ -1,0 +1,94 @@
+{
+  "mode": "engine_direct_sql_lane_validation",
+  "total_prompts_tested": 33,
+  "primary_prompts_tested": 10,
+  "variant_prompts_tested": 4,
+  "refusal_prompts_tested": 3,
+  "expanded_prompts_tested": 16,
+  "total_generated": 27,
+  "total_correct_refusals": 6,
+  "total_failures": 5,
+  "no_hardcoding_compliance_pct": 100.0,
+  "full_shape_compliance_pct": 100.0,
+  "failure_reason_counts": {
+    "expected_specific_refusal_but_generated": 5
+  },
+  "category_metrics": {
+    "baseline_primary": {
+      "total": 10,
+      "generated": 10,
+      "correct_refusals": 0,
+      "failures": 0,
+      "pass_rate_pct": 100.0
+    },
+    "baseline_variant": {
+      "total": 4,
+      "generated": 4,
+      "correct_refusals": 0,
+      "failures": 0,
+      "pass_rate_pct": 100.0
+    },
+    "baseline_refusal": {
+      "total": 3,
+      "generated": 0,
+      "correct_refusals": 3,
+      "failures": 0,
+      "pass_rate_pct": 100.0
+    },
+    "synonym_heavy": {
+      "total": 3,
+      "generated": 3,
+      "correct_refusals": 0,
+      "failures": 0,
+      "pass_rate_pct": 100.0
+    },
+    "ambiguous_procurement": {
+      "total": 2,
+      "generated": 2,
+      "correct_refusals": 0,
+      "failures": 0,
+      "pass_rate_pct": 100.0
+    },
+    "date_filter_variant": {
+      "total": 3,
+      "generated": 3,
+      "correct_refusals": 0,
+      "failures": 0,
+      "pass_rate_pct": 100.0
+    },
+    "unsupported_field_request": {
+      "total": 2,
+      "generated": 2,
+      "correct_refusals": 0,
+      "failures": 2,
+      "pass_rate_pct": 0.0
+    },
+    "unsupported_custom_bucket": {
+      "total": 2,
+      "generated": 1,
+      "correct_refusals": 1,
+      "failures": 1,
+      "pass_rate_pct": 50.0
+    },
+    "mixed_module": {
+      "total": 2,
+      "generated": 0,
+      "correct_refusals": 2,
+      "failures": 0,
+      "pass_rate_pct": 100.0
+    },
+    "edge_specific_refusal": {
+      "total": 2,
+      "generated": 2,
+      "correct_refusals": 0,
+      "failures": 2,
+      "pass_rate_pct": 0.0
+    }
+  },
+  "top_remaining_failure_clusters": {
+    "unsupported_field_request": 2,
+    "edge_specific_refusal": 2,
+    "unsupported_custom_bucket": 1
+  },
+  "primary_prompt_pass_rate_pct": 100.0
+}

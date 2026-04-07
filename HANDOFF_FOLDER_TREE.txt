@@ -1,0 +1,79 @@
+drive_handoff_iwfusion_v1_20260406/
+├── README_FIRST.md
+├── DEVOPS_DEPLOYMENT_CHECKLIST.md
+├── FINAL_MISSING_ITEMS_CHECK.md
+├── DOCKER_DEPLOYMENT_README.md
+├── HANDOFF_FOLDER_TREE.txt
+├── .env.docker.example
+├── docker-compose.yml
+├── runtime_content_manifest.json
+├── 01_app_package/
+│   └── azure_v1_package/
+│       ├── README.md
+│       ├── AZURE_RELEASE_CHECKLIST.md
+│       ├── DEPLOYMENT_GAP_LIST.md
+│       ├── architecture/
+│       │   └── azure_target_architecture.md
+│       ├── app/
+│       │   ├── backend/
+│       │   │   ├── main.py
+│       │   │   ├── routes.py
+│       │   │   ├── ops_routes.py
+│       │   │   └── core/
+│       │   └── frontend/
+│       │       ├── index.html
+│       │       └── src/
+│       ├── backend/
+│       │   ├── .env.example
+│       │   ├── Dockerfile
+│       │   ├── requirements-v1.txt
+│       │   ├── startup.sh
+│       │   └── startup.ps1
+│       ├── frontend/
+│       │   ├── .env.production.example
+│       │   ├── Dockerfile
+│       │   └── nginx.conf
+│       ├── azure/
+│       │   ├── appservice_backend_startup.sh
+│       │   ├── appservice_frontend_startup.sh
+│       │   └── deploy_cli_example.sh
+│       └── checks/
+│           ├── smoke_test_api.sh
+│           ├── smoke_test_prompts.md
+│           └── ui_deployed_validation_summary.json
+├── 02_model_runtime/
+│   ├── README_MODEL_RUNTIME.md
+│   ├── CHECKSUMS.txt
+│   ├── azure_llama_cpp_launch.sh
+│   ├── model_runtime_env.example
+│   ├── model_runtime_manifest.json
+│   ├── gguf/
+│   │   └── master_sovereign_v51_gold_q4_k_m.gguf
+│   └── mlx_adapter/
+│       ├── adapter_config.json
+│       └── adapters.safetensors
+├── 03_validation_evidence/
+│   ├── v1_ui_local_validation_report.json
+│   ├── sql_validation_engine_direct/
+│   │   ├── cross_module_sql_showcase_summary.json
+│   │   └── cross_module_sql_showcase_validation_results.json
+│   └── sql_validation_live_api/
+│       ├── cross_module_sql_api_path_summary.json
+│       ├── cross_module_sql_api_path_validation_results.json
+│       └── cross_module_sql_api_path_mismatches.json
+├── docker/
+│   ├── backend/
+│   │   └── init-db.sh
+│   ├── model/
+│   │   └── start-model.sh
+│   └── nginx/
+│       ├── nginx.conf
+│       ├── generate-self-signed.sh
+│       └── certs/
+│           └── README.md
+└── runtime_content/
+    └── iwerp-prod/
+
+Notes:
+- This tree is intentionally concise. It shows the deploy-relevant structure, not every nested runtime/content file.
+- The handoff root is the zip-ready folder.

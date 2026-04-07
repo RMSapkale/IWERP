@@ -1,0 +1,51 @@
+{
+  "package_name": "azure_v1_package",
+  "generated_at_utc": "2026-04-06T11:08:20Z",
+  "public_contract": {
+    "inference_endpoints": [
+      "/v1/sovereign/chat/completions",
+      "/v1/sovereign/responses"
+    ],
+    "legacy_compat_endpoints_hidden": true
+  },
+  "source_trees": {
+    "backend_app_root": "app/backend",
+    "frontend_app_root": "app/frontend",
+    "backend_file_count": 306,
+    "frontend_file_count": 32,
+    "includes_moa_runtime": true,
+    "includes_moe_runtime": true
+  },
+  "files": [
+    "AZURE_RELEASE_CHECKLIST.md",
+    "DEPLOYMENT_GAP_LIST.md",
+    "README.md",
+    "app/backend/main.py",
+    "app/backend/moa_routes.py",
+    "app/backend/core/rag/engine.py",
+    "app/backend/core/moe/agent_orchestrator.py",
+    "app/backend/core/moe/layer.py",
+    "app/backend/core/moe/prototype.py",
+    "app/frontend/package.json",
+    "app/frontend/vite.config.js",
+    "app/frontend/src/App.jsx",
+    "app/frontend/src/api.js",
+    "app/frontend/src/pages/Dashboard.jsx",
+    "app/frontend/src/pages/Laboratory.jsx",
+    "architecture/azure_target_architecture.md",
+    "azure/appservice_backend_startup.sh",
+    "azure/appservice_frontend_startup.sh",
+    "azure/deploy_cli_example.sh",
+    "backend/.env.example",
+    "backend/Dockerfile",
+    "backend/requirements-v1.txt",
+    "backend/startup.ps1",
+    "backend/startup.sh",
+    "checks/smoke_test_api.sh",
+    "checks/smoke_test_prompts.md",
+    "checks/ui_deployed_validation_summary.json",
+    "frontend/.env.production.example",
+    "frontend/Dockerfile",
+    "frontend/nginx.conf"
+  ]
+}

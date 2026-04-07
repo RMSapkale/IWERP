@@ -1,0 +1,126 @@
+services:
+  proxy:
+    image: nginx:1.27-alpine
+    container_name: iwfusion-proxy
+    depends_on:
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_started
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/certs:/etc/nginx/certs:ro
+    ports:
+      - "${PROXY_HTTP_PORT:-80}:80"
+      - "${PROXY_HTTPS_PORT:-443}:443"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./01_app_package/azure_v1_package
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-https://iwerp.com/api}
+        VITE_ENABLE_ADMIN_DEBUG: ${VITE_ENABLE_ADMIN_DEBUG:-0}
+        VITE_ENABLE_PLSQL: ${VITE_ENABLE_PLSQL:-0}
+    image: iwfusion/frontend:v1
+    container_name: iwfusion-frontend
+    expose:
+      - "80"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./01_app_package/azure_v1_package
+      dockerfile: backend/Dockerfile
+    image: iwfusion/backend:v1
+    container_name: iwfusion-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      model:
+        condition: service_started
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-iwfusion}:${POSTGRES_PASSWORD:-iwfusion_change_me}@postgres:5432/${POSTGRES_DB:-iwfusion}"
+      SECRET_KEY: "${SECRET_KEY:-change-me-before-production}"
+      LOCAL_SLM_BASE_URL: "http://model:8080"
+      LLAMA_CPP_BASE_URL: "http://model:8080"
+      ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-https://iwerp.com}"
+      IWERP_BASE_DIR: "/app/runtime/iwerp-prod"
+      IWFUSION_INFERENCE_BACKEND: "${IWFUSION_INFERENCE_BACKEND:-llama_cpp}"
+      IWFUSION_MODEL_NAME: "${IWFUSION_MODEL_NAME:-IWFUSION-SLM-V1}"
+      IWFUSION_USE_RERANKER: "${IWFUSION_USE_RERANKER:-false}"
+      IWFUSION_USE_EMBEDDINGS: "${IWFUSION_USE_EMBEDDINGS:-true}"
+      REDIS_URL: "redis://redis:6379/0"
+      PORT: "8000"
+    volumes:
+      - ./runtime_content:/app/runtime:ro
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    restart: unless-stopped
+
+  db-bootstrap:
+    image: iwfusion/backend:v1
+    container_name: iwfusion-db-bootstrap
+    profiles: ["init"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-iwfusion}:${POSTGRES_PASSWORD:-iwfusion_change_me}@postgres:5432/${POSTGRES_DB:-iwfusion}"
+      SECRET_KEY: "${SECRET_KEY:-change-me-before-production}"
+      IWERP_BASE_DIR: "/app/runtime/iwerp-prod"
+      DB_INIT_MODE: "${DB_INIT_MODE:-safe}"
+      DB_RESET_CONFIRM: "${DB_RESET_CONFIRM:-}"
+    command: ["/bin/sh", "/compose-scripts/init-db.sh"]
+    volumes:
+      - ./runtime_content:/app/runtime:ro
+      - ./docker/backend/init-db.sh:/compose-scripts/init-db.sh:ro
+    restart: "no"
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: iwfusion-postgres
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-iwfusion}"
+      POSTGRES_USER: "${POSTGRES_USER:-iwfusion}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-iwfusion_change_me}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-iwfusion} -d ${POSTGRES_DB:-iwfusion}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: iwfusion-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    restart: unless-stopped
+
+  model:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    container_name: iwfusion-model
+    command: ["/bin/sh", "/srv/start-model.sh"]
+    environment:
+      MODEL_PATH: "/models/master_sovereign_v51_gold_q4_k_m.gguf"
+      MODEL_CONTEXT_SIZE: "${MODEL_CONTEXT_SIZE:-8192}"
+      MODEL_THREADS: "${MODEL_THREADS:-8}"
+      MODEL_GPU_LAYERS: "${MODEL_GPU_LAYERS:-0}"
+      MODEL_PORT_INTERNAL: "8080"
+    volumes:
+      - ./02_model_runtime/gguf:/models:ro
+      - ./docker/model/start-model.sh:/srv/start-model.sh:ro
+    ports:
+      - "${MODEL_PORT:-8080}:8080"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

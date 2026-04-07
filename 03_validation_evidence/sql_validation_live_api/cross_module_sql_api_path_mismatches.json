@@ -1,0 +1,160 @@
+[
+  {
+    "case_id": "PO-001",
+    "mismatch_types": [
+      "generated",
+      "pass",
+      "verifier_pass",
+      "full_shape_pass",
+      "refusal_reason"
+    ],
+    "api_path": {
+      "generated": false,
+      "pass": false,
+      "route_selected": "sql_generation",
+      "module_selected": "Procurement",
+      "verifier_pass": false,
+      "hardcoding_pass": true,
+      "full_shape_pass": false,
+      "required_field_coverage": false,
+      "join_coverage": false,
+      "filter_coverage": false,
+      "ordering_coverage": false,
+      "refusal_reason": "",
+      "pass_fail_reason": "unexpected_refusal"
+    },
+    "engine_direct": {
+      "generated": true,
+      "pass": true,
+      "route_selected": "sql_generation",
+      "module_selected": "Procurement",
+      "verifier_pass": true,
+      "hardcoding_pass": true,
+      "full_shape_pass": true,
+      "required_field_coverage": true,
+      "join_coverage": true,
+      "filter_coverage": true,
+      "ordering_coverage": true,
+      "refusal_reason": "",
+      "pass_fail_reason": "ok"
+    }
+  },
+  {
+    "case_id": "PO-002",
+    "mismatch_types": [
+      "generated",
+      "pass",
+      "module_selected",
+      "verifier_pass",
+      "full_shape_pass",
+      "refusal_reason"
+    ],
+    "api_path": {
+      "generated": false,
+      "pass": false,
+      "route_selected": "sql_generation",
+      "module_selected": "Payables",
+      "verifier_pass": false,
+      "hardcoding_pass": true,
+      "full_shape_pass": false,
+      "required_field_coverage": false,
+      "join_coverage": false,
+      "filter_coverage": false,
+      "ordering_coverage": false,
+      "refusal_reason": "",
+      "pass_fail_reason": "unexpected_refusal"
+    },
+    "engine_direct": {
+      "generated": true,
+      "pass": true,
+      "route_selected": "sql_generation",
+      "module_selected": "UNKNOWN",
+      "verifier_pass": true,
+      "hardcoding_pass": true,
+      "full_shape_pass": true,
+      "required_field_coverage": true,
+      "join_coverage": true,
+      "filter_coverage": true,
+      "ordering_coverage": true,
+      "refusal_reason": "",
+      "pass_fail_reason": "ok"
+    }
+  },
+  {
+    "case_id": "PO-V001",
+    "mismatch_types": [
+      "generated",
+      "pass",
+      "verifier_pass",
+      "full_shape_pass",
+      "refusal_reason"
+    ],
+    "api_path": {
+      "generated": false,
+      "pass": false,
+      "route_selected": "sql_generation",
+      "module_selected": "Procurement",
+      "verifier_pass": false,
+      "hardcoding_pass": true,
+      "full_shape_pass": false,
+      "required_field_coverage": false,
+      "join_coverage": false,
+      "filter_coverage": false,
+      "ordering_coverage": false,
+      "refusal_reason": "",
+      "pass_fail_reason": "unexpected_refusal"
+    },
+    "engine_direct": {
+      "generated": true,
+      "pass": true,
+      "route_selected": "sql_generation",
+      "module_selected": "Procurement",
+      "verifier_pass": true,
+      "hardcoding_pass": true,
+      "full_shape_pass": true,
+      "required_field_coverage": true,
+      "join_coverage": true,
+      "filter_coverage": true,
+      "ordering_coverage": true,
+      "refusal_reason": "",
+      "pass_fail_reason": "ok"
+    }
+  },
+  {
+    "case_id": "PO-N001",
+    "mismatch_types": [
+      "module_selected",
+      "refusal_reason"
+    ],
+    "api_path": {
+      "generated": false,
+      "pass": true,
+      "route_selected": "sql_generation",
+      "module_selected": "Payables",
+      "verifier_pass": false,
+      "hardcoding_pass": true,
+      "full_shape_pass": false,
+      "required_field_coverage": false,
+      "join_coverage": false,
+      "filter_coverage": false,
+      "ordering_coverage": false,
+      "refusal_reason": "Missing grounded support for requested fields: Receipt Date, Line Number, PO Number, Ordered Quantity, Received Quantity, Billed Quantity, Invoice Line Amount.",
+      "pass_fail_reason": "correct_refusal"
+    },
+    "engine_direct": {
+      "generated": false,
+      "pass": true,
+      "route_selected": "sql_generation",
+      "module_selected": "UNKNOWN",
+      "verifier_pass": false,
+      "hardcoding_pass": true,
+      "full_shape_pass": false,
+      "required_field_coverage": false,
+      "join_coverage": false,
+      "filter_coverage": false,
+      "ordering_coverage": false,
+      "refusal_reason": "Missing grounded support for requested fields: Invoice Line Amount.",
+      "pass_fail_reason": "correct_refusal"
+    }
+  }
+]

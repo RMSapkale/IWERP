@@ -1,0 +1,12 @@
+IWFUSION_MODEL_NAME=IWFUSION-SLM-V1
+IWERP_BASE_DIR=/home/site/wwwroot
+
+# Recommended Azure/Linux model-host mode
+IWFUSION_INFERENCE_BACKEND=llama_cpp
+LOCAL_SLM_BASE_URL=http://model-host.internal:8080
+
+# Exact local parity mode is MLX, but that is not the preferred Azure target.
+# IWFUSION_INFERENCE_BACKEND=mlx
+# IWFUSION_MODEL_PATH=/models/mlx/Meta-Llama-3-8B-Instruct-4bit
+# IWFUSION_ADAPTER_PATH=/models/iwfusion-v1/mlx_adapter
+

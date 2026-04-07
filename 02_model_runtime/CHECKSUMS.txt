@@ -1,0 +1,8 @@
+IWFUSION-SLM-V1 drive handoff checksums
+
+GGUF deployment artifact
+a5acce4b55dfc70f245668bf2fe0625bd60b6ec5e46350904bd12d5dbfe1a5cc  gguf/master_sovereign_v51_gold_q4_k_m.gguf
+
+Exact local MLX adapter
+96e8b0b62631c122a350502ad4a895e4583eef4e2e4903faf554db3c84205274  mlx_adapter/adapters.safetensors
+

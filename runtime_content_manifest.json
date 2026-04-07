@@ -1,0 +1,16 @@
+{
+  "runtime_root": "runtime_content",
+  "backend_iwerp_base_dir": "/app/runtime/iwerp-prod",
+  "included_paths": [
+    "runtime_content/iwerp-prod/specialization_tracks",
+    "runtime_content/iwerp-prod/coverage_expansion",
+    "runtime_content/iwerp-prod/grounding_answerability_pass",
+    "runtime_content/Data_Complete/Finance/txts/https_docs.oracle.com_en_cloud_saas_financials_.._.._.._.._.._en_cloud_saas_readiness_epm.html.txt",
+    "runtime_content/Data_Complete/Finance/txts/https_docs.oracle.com_en_cloud_saas_fusion-ai_.txt",
+    "runtime_content/Data_Complete/Finance/txts/https_docs.oracle.com_en_cloud_saas_financials_25d_faugl_index.html.txt"
+  ],
+  "notes": [
+    "The backend app source already includes the FAISS retrieval indexes under app/backend/core/retrieval/vectors/faiss.",
+    "The runtime_content bundle adds the external grounding/runtime artifacts expected through IWERP_BASE_DIR and its parent Data_Complete path."
+  ]
+}
