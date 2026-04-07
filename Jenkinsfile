@@ -33,6 +33,16 @@ pipeline {
     }
 
     stages {
+        stage('Cleanup Environment') {
+            steps {
+                script {
+                    echo 'Reclaiming disk space before starting new build...'
+                    sh "docker system prune -f"
+                    sh "docker image prune -a -f --filter 'until=24h'" 
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: 'main', 
@@ -63,8 +73,8 @@ pipeline {
     post {
         always {
             script {
-                // Automatically clear out orphaned or unused images after deployment to preserve storage
-                sh "docker system prune -f"
+                // Clear all unused data including build cache to free up maximum space
+                sh "docker system prune -a -f"
             }
         }
         success {
