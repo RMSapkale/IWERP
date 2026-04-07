@@ -4,6 +4,7 @@ import asyncio
 from sqlalchemy import text
 
 from .session import Base, engine
+from . import models
 
 RESET_CONFIRMATION = "YES_RESET"
 
