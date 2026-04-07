@@ -111,16 +111,21 @@ services:
   model:
     image: ghcr.io/ggml-org/llama.cpp:server
     container_name: iwfusion-model
-    entrypoint: ["/bin/sh", "/srv/start-model.sh"]
-    environment:
-      MODEL_PATH: "/models/master_sovereign_v51_gold_q4_k_m.gguf"
-      MODEL_CONTEXT_SIZE: "${MODEL_CONTEXT_SIZE:-8192}"
-      MODEL_THREADS: "${MODEL_THREADS:-8}"
-      MODEL_GPU_LAYERS: "${MODEL_GPU_LAYERS:-0}"
-      MODEL_PORT_INTERNAL: "8082"
+    command: 
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8082"
+      - "--model"
+      - "${MODEL_PATH:-/models/master_sovereign_v51_gold_q4_k_m.gguf}"
+      - "--ctx-size"
+      - "${MODEL_CONTEXT_SIZE:-8192}"
+      - "--threads"
+      - "${MODEL_THREADS:-8}"
+      - "--n-gpu-layers"
+      - "${MODEL_GPU_LAYERS:-0}"
     volumes:
       - ./02_model_runtime/gguf:/models:ro
-      - ./docker/model/start-model.sh:/srv/start-model.sh:ro
     ports:
       - "${MODEL_PORT:-8082}:8082"
     restart: unless-stopped
