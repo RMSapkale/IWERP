@@ -108,7 +108,8 @@ services:
   model:
     image: ghcr.io/ggml-org/llama.cpp:server
     container_name: iwfusion-model
-    command: ["/bin/sh", "/srv/start-model.sh"]
+    entrypoint: ["/bin/sh", "/srv/start-model.sh"]
+    command: []
     environment:
       MODEL_PATH: "/models/master_sovereign_v51_gold_q4_k_m.gguf"
       MODEL_CONTEXT_SIZE: "${MODEL_CONTEXT_SIZE:-8192}"
