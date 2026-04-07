@@ -45,8 +45,8 @@ pipeline {
             steps {
                 script {
                     echo 'Reclaiming disk space before starting new build...'
+                    // Remove only dangling images and build cache, NOT used/available images
                     sh "docker system prune -f"
-                    sh "docker image prune -a -f --filter 'until=24h'" 
                 }
             }
         }
@@ -81,8 +81,8 @@ pipeline {
     post {
         always {
             script {
-                // Clear all unused data including build cache to free up maximum space
-                sh "docker system prune -a -f"
+                // Only clear dangling data to preserve base images like llama.cpp
+                sh "docker system prune -f"
             }
         }
         success {
