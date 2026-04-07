@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY backend/requirements-v1.txt /tmp/requirements-v1.txt
-RUN pip install --no-cache-dir -r /tmp/requirements-v1.txt
+RUN pip install --no-cache-dir --index-url https://pypi.org/simple --extra-index-url https://download.pytorch.org/whl/cpu -r /tmp/requirements-v1.txt
 
 COPY app /app/app
 COPY backend/startup.sh /app/backend/startup.sh

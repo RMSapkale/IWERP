@@ -11,10 +11,10 @@ passlib==1.7.4
 structlog==25.5.0
 httpx==0.28.1
 sqlglot==29.0.1
-sentence-transformers==5.2.3
-transformers==5.2.0
-torch==2.10.0
-faiss-cpu==1.13.2
+sentence-transformers
+transformers
+torch
+faiss-cpu
 redis==6.4.0
 openpyxl==3.1.5
 pypdf==6.9.1
