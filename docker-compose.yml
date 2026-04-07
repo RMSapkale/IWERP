@@ -102,12 +102,12 @@ services:
       MODEL_CONTEXT_SIZE: "${MODEL_CONTEXT_SIZE:-8192}"
       MODEL_THREADS: "${MODEL_THREADS:-8}"
       MODEL_GPU_LAYERS: "${MODEL_GPU_LAYERS:-0}"
-      MODEL_PORT_INTERNAL: "8080"
+      MODEL_PORT_INTERNAL: "8082"
     volumes:
       - ./02_model_runtime/gguf:/models:ro
       - ./docker/model/start-model.sh:/srv/start-model.sh:ro
     ports:
-      - "${MODEL_PORT:-8080}:8080"
+      - "${MODEL_PORT:-8082}:8082"
     restart: unless-stopped
 
 volumes:
