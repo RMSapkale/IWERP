@@ -51,7 +51,7 @@ services:
       REDIS_URL: "redis://redis:6379/0"
       PORT: "8000"
     volumes:
-      - ./runtime_content:/app/runtime:ro
+      - ./runtime_content:/app/runtime:rw
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     restart: unless-stopped
@@ -73,7 +73,7 @@ services:
       DB_RESET_CONFIRM: "${DB_RESET_CONFIRM:-}"
     command: ["/bin/sh", "/compose-scripts/init-db.sh"]
     volumes:
-      - ./runtime_content:/app/runtime:ro
+      - ./runtime_content:/app/runtime:rw
       - ./docker/backend/init-db.sh:/compose-scripts/init-db.sh:ro
     restart: "no"
     networks:
