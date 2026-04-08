@@ -106,7 +106,7 @@ export default function Landing() {
             <div className={styles.termLine}><span className={styles.prompt}>user</span> Generate GL to AP reconciliation SQL with PK/FK</div>
             <div className={styles.termLine} style={{ marginTop: 12, color: '#3b82f6' }}>IWERP_1.0 ⟶</div>
             <div className={styles.termCode}>
-{`SELECT 
+              {`SELECT 
   -- PK: GL_CODE_COMBINATIONS.CODE_COMBINATION_ID
   gcc.CODE_COMBINATION_ID,
   gcc.SEGMENT1 AS "Company",
@@ -285,7 +285,7 @@ GROUP BY gcc.CODE_COMBINATION_ID,
           <span style={{ fontFamily: 'Sora', fontWeight: 700 }}>IWERP</span>
         </div>
         <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>
-          © 2026 IntegrationWings · Built for Oracle Fusion Enterprise Excellence
+          © 2026 IntegrationWings. All rights reserved.
         </p>
       </footer>
     </div>
